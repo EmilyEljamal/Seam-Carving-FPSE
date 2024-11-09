@@ -1,0 +1,4 @@
+(executable
+ (public_name seam_carving)
+ (name main)
+ (libraries seam_carving))
