@@ -10,6 +10,8 @@
    SeamIdentification.mli
    SeamRemoval.ml
    SeamRemoval.mli
+   array.ml
+   array.mli
    dune-package
    gif.ml
    gif.mli
@@ -21,6 +23,10 @@
    seam_carving.cmx
    seam_carving.cmxa
    seam_carving.ml
+   seam_carving__Array.cmi
+   seam_carving__Array.cmt
+   seam_carving__Array.cmti
+   seam_carving__Array.cmx
    seam_carving__Gif.cmi
    seam_carving__Gif.cmt
    seam_carving__Gif.cmti
@@ -62,6 +68,10 @@
      (source (path Seam_carving) (impl (path seam_carving.ml-gen))))
     (name Seam_carving)
     (modules
+     (module
+      (obj_name seam_carving__Array)
+      (visibility public)
+      (source (path Array) (intf (path array.mli)) (impl (path array.ml))))
      (module
       (obj_name seam_carving__Gif)
       (visibility public)

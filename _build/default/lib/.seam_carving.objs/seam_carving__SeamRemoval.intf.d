@@ -1,1 +1,1 @@
-lib/SeamRemoval.mli:
+lib/SeamRemoval.mli: Types

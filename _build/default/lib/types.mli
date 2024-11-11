@@ -1,4 +1,4 @@
 
-type image
+type image = unit
 
-type energy_map
+type energy_map = float array array

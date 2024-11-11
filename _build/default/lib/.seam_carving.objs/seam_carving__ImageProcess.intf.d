@@ -1,1 +1,1 @@
-lib/ImageProcess.mli:
+lib/ImageProcess.mli: Types

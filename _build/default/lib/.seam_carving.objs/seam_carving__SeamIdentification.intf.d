@@ -1,1 +1,1 @@
-lib/SeamIdentification.mli:
+lib/SeamIdentification.mli: Types

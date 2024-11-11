@@ -1,1 +1,1 @@
-lib/SeamRemoval.ml:
+lib/SeamRemoval.ml: Types
