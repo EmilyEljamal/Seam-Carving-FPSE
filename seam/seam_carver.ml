@@ -1,3 +1,4 @@
+(* quickly generated demo to check if ImageMagick loaded properly *)
 (* Function to apply a color change using ImageMagick *)
 let color_frame output_filename color =
   let command =
