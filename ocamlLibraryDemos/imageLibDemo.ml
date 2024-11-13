@@ -1,4 +1,7 @@
-(* quickly generated demo to check if ImageMagick loaded properly *)
+(* quickly generated demo to check if ImageMagick loaded properly 
+  From the Command Line Interface, creates a GIF of alternating colors that is saved as output.gif
+  *)
+
 (* Function to apply a color change using ImageMagick *)
 let color_frame output_filename color =
   let command =
@@ -14,7 +17,7 @@ let save_frame frame_num =
     | 0 -> "red"
     | 1 -> "white"
     | 2 -> "blue"
-    | _ -> "black"  (* default fallback, although mod 3 should cover cases *)
+    | _ -> "black" 
   in
   color_frame filename color
 
