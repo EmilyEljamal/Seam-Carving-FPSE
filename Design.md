@@ -1,4 +1,12 @@
+Project Design Proposal
+Fall 2024
+Professor Smith
+Group: Emily Eljamal & Maria-Noelia Herne
+Date: 11/13/2024
+
 Github Link: https://github.com/EmilyEljamal/Seam-Carving-FPSE 
+
+# Seam Carving to Resize Images
 
 # Project Overview
 
@@ -10,12 +18,11 @@ The project will also include a dynamic visual component, where each intermediat
 
 Overall, this project serves as a deep dive into algorithmic image processing, emphasizing efficient memory management, data persistence, and functional problem-solving in OCaml. The result will be a tool that enables image resizing and serves as a foundational piece for more advanced applications in adaptive media and computer vision.
 
-Example: This is the original image		This is the vertical seam to be removed
-
-This is the image after removing 1024 pixels. The main focus, the surfer, is untouched and the waves remain. The resized image without seam carving would look like the image to the right.
         			
 # Algorithm Description
-The algorithm we will use to implement Seam Carving is derived from the MIT lesson from Fall 2020 Seam Carving | Week 2, lecture 7 | 18.S191 MIT Fall 2020. The main sequence of the algorithm is 
+The algorithm we will use to implement Seam Carving is derived from the MIT lesson from Fall 2020 Seam Carving | Week 2, lecture 7 | 18.S191 MIT Fall 2020.
+https://www.youtube.com/watch?v=rpB6zQNsbQU&t=230s
+The main sequence of the algorithm is 
 Create an Energy Grid of values 0-1 (black-white) to assign importance to pixels based on edge detection
 Time Complexity: O(N)
 
