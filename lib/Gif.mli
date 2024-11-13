@@ -1,1 +1,0 @@
-val create_gif : string -> int -> unit

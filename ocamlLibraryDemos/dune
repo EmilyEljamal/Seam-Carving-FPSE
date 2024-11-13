@@ -1,0 +1,3 @@
+(executable
+ (name seam_carver)
+ (libraries imagelib imagelib.unix))
