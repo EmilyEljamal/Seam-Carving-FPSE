@@ -1,0 +1,45 @@
+lib: [
+  "_build/install/default/lib/seam_carving/META"
+  "_build/install/default/lib/seam_carving/dune-package"
+  "_build/install/default/lib/seam_carving/gif.ml"
+  "_build/install/default/lib/seam_carving/gif.mli"
+  "_build/install/default/lib/seam_carving/image_process.ml"
+  "_build/install/default/lib/seam_carving/image_process.mli"
+  "_build/install/default/lib/seam_carving/opam"
+  "_build/install/default/lib/seam_carving/seam_carving.a"
+  "_build/install/default/lib/seam_carving/seam_carving.cma"
+  "_build/install/default/lib/seam_carving/seam_carving.cmi"
+  "_build/install/default/lib/seam_carving/seam_carving.cmt"
+  "_build/install/default/lib/seam_carving/seam_carving.cmx"
+  "_build/install/default/lib/seam_carving/seam_carving.cmxa"
+  "_build/install/default/lib/seam_carving/seam_carving.ml"
+  "_build/install/default/lib/seam_carving/seam_carving__Gif.cmi"
+  "_build/install/default/lib/seam_carving/seam_carving__Gif.cmt"
+  "_build/install/default/lib/seam_carving/seam_carving__Gif.cmti"
+  "_build/install/default/lib/seam_carving/seam_carving__Gif.cmx"
+  "_build/install/default/lib/seam_carving/seam_carving__Image_process.cmi"
+  "_build/install/default/lib/seam_carving/seam_carving__Image_process.cmt"
+  "_build/install/default/lib/seam_carving/seam_carving__Image_process.cmti"
+  "_build/install/default/lib/seam_carving/seam_carving__Image_process.cmx"
+  "_build/install/default/lib/seam_carving/seam_carving__Seam_identification.cmi"
+  "_build/install/default/lib/seam_carving/seam_carving__Seam_identification.cmt"
+  "_build/install/default/lib/seam_carving/seam_carving__Seam_identification.cmti"
+  "_build/install/default/lib/seam_carving/seam_carving__Seam_identification.cmx"
+  "_build/install/default/lib/seam_carving/seam_carving__Types.cmi"
+  "_build/install/default/lib/seam_carving/seam_carving__Types.cmt"
+  "_build/install/default/lib/seam_carving/seam_carving__Types.cmti"
+  "_build/install/default/lib/seam_carving/seam_carving__Types.cmx"
+  "_build/install/default/lib/seam_carving/seam_identification.ml"
+  "_build/install/default/lib/seam_carving/seam_identification.mli"
+  "_build/install/default/lib/seam_carving/types.ml"
+  "_build/install/default/lib/seam_carving/types.mli"
+]
+libexec: [
+  "_build/install/default/lib/seam_carving/seam_carving.cmxs"
+]
+bin: [
+  "_build/install/default/bin/seam_carving"
+]
+doc: [
+  "_build/install/default/doc/seam_carving/README.md"
+]

@@ -1,0 +1,6 @@
+description = ""
+requires = "core"
+archive(byte) = "seam_carving.cma"
+archive(native) = "seam_carving.cmxa"
+plugin(byte) = "seam_carving.cma"
+plugin(native) = "seam_carving.cmxs"

@@ -1,6 +1,5 @@
 (library
  (name seam_carving)
  (public_name seam_carving)
- (modules ImageProcess SeamIdentification Gif Types)
- (libraries core) 
-)
+ (modules image_process seam_identification gif types)
+ (libraries core))
