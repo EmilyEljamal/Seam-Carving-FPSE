@@ -1,4 +1,5 @@
 [@@@ocaml.warning "-27"]
+open Core
 
 module Pair = struct
   type t = {
@@ -7,35 +8,40 @@ module Pair = struct
   } [@@deriving compare]
 
   let create (_energy : float) (_direction : int) : t =
-    failwith "Not implemented: Pair.create"
+    { energy = _energy; direction = _direction }
 
   let get_energy (_pair : t) : float =
-    failwith "Not implemented: Pair.get_energy"
+    _pair.energy
 
   let get_direction (_pair : t) : int =
-    failwith "Not implemented: Pair.get_direction"
+    _pair.direction
 
   let update_energy (_pair : t) (_energy : float) : t =
-    failwith "Not implemented: Pair.update_energy"
+    { energy = _energy; direction = _pair.direction }
 end
 
 module Array_2d = struct
   type 'a t = 'a array array
 
   let init (rows : int) (cols : int) (f : int -> int -> 'a) : 'a t =
-    failwith "Not implemented: Array_2d.init"
+    Array.init rows (fun i -> Array.init cols (fun j -> f i j))
 
-  let get (arr : 'a t) (x : int) (y : int) : 'a =
-    failwith "Not implemented: Array_2d.get"
+  let get (arr : 'a t) (x : int) (y : int) : 'a option=
+    Option.try_with (fun () -> arr.(x).(y))
 
   let dimensions (arr : 'a t) : int * int =
-    failwith "Not implemented: Array_2d.dimensions"
+    (Array.length arr.(0), Array.length arr)
 
   let adjacents (arr : 'a t) (x : int) (y : int) : 'a list =
-    failwith "Not implemented: Array_2d.adjacents"
+    let g xo yo = get arr (x + xo) (y + yo) in
+    List.filter_map ~f:Fn.id
+      [
+       g 0 (-1); g (-1) 0; g 1 0; g 0 1;
+      ]
 
-  let map (f : 'a -> 'b) (arr : 'a t) : 'b t =
-    failwith "Not implemented: Array_2d.map"
+  let map (f : int -> int -> 'a -> 'b) (arr : 'a t) : 'b t =
+    Array.mapi arr ~f:(fun y r -> Array.mapi r ~f:(f y))
+
 end
 
 type image = float Array_2d.t
