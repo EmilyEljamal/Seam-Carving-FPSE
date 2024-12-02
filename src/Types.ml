@@ -24,7 +24,7 @@ module Array_2d = struct
   type 'a t = 'a array array
 
   let init (rows : int) (cols : int) (f : int -> int -> 'a) : 'a t =
-    Array.init rows (fun i -> Array.init cols (fun j -> f i j))
+    Array.init rows ~f:(fun i -> Array.init cols ~f:(fun j -> f i j))
 
   let get (arr : 'a t) (x : int) (y : int) : 'a option=
     Option.try_with (fun () -> arr.(x).(y))
@@ -52,7 +52,7 @@ module Minimal_energy_map = struct
   type t = Pair.t Array_2d.t
 
   let from_energy_map (_energy_map : energy_map) : t =
-    failwith "Not implemented: Minimal_energy_map.from_energy_map"
+    Array_2d.map (fun row col energy -> Pair.create energy 0) _energy_map
 
   let get_minimal_energy (_map : t) (_row : int) : int =
     failwith "Not implemented: Minimal_energy_map.get_minimal_energy"
@@ -61,5 +61,5 @@ module Minimal_energy_map = struct
     failwith "Not implemented: Minimal_energy_map.update_direction"
 
   let to_energy_map (_map : t) : energy_map =
-    failwith "Not implemented: Minimal_energy_map.to_energy_map"
+    Array_2d.map (fun row col pair -> Pair.get_energy pair) _map
 end
