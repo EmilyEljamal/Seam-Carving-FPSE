@@ -29,6 +29,9 @@ module Array_2d = struct
   let get (arr : 'a t) (x : int) (y : int) : 'a option=
     Option.try_with (fun () -> arr.(x).(y))
 
+  let get_row (arr : 'a t) (x : int) : 'a array option =
+    Option.try_with (fun () -> arr.(x))
+
   let dimensions (arr : 'a t) : int * int =
     (Array.length arr.(0), Array.length arr)
 
@@ -55,10 +58,20 @@ module Minimal_energy_map = struct
     Array_2d.map (fun row col energy -> Pair.create energy 0) _energy_map
 
   let get_minimal_energy (_map : t) (_row : int) : int =
-    failwith "Not implemented: Minimal_energy_map.get_minimal_energy"
+    match Array_2d.get_row _map _row with
+    | None -> failwith "Invalid row index"
+    | Some row ->
+        Array.foldi row ~init:(0, Float.infinity) ~f:(fun col_idx (min_idx, min_val) pair ->
+            let energy = Pair.get_energy pair in
+            if (Float.compare energy min_val < 0) then (col_idx, energy) else (min_idx, min_val))
+        |> fst
 
   let update_direction (_map : t) (_row : int) (_col : int) (_direction : int) : unit =
-    failwith "Not implemented: Minimal_energy_map.update_direction"
+    match Array_2d.get _map _row _col with
+    | None -> failwith "Invalid row index"
+    | Some pair ->
+      let updated_pair = Pair.create (Pair.get_energy pair) _direction in
+      _map.(_row).(_col) <- updated_pair
 
   let to_energy_map (_map : t) : energy_map =
     Array_2d.map (fun row col pair -> Pair.get_energy pair) _map

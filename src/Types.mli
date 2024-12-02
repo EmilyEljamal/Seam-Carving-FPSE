@@ -33,6 +33,9 @@ sig
     val get : 'a t -> int -> int -> 'a option
     (** [get arr x y] retrieves an element at the specified row and column in a 2D array. *)
 
+    val get_row : 'a t -> int -> 'a array option
+    (** [get_row arr x] retrieves the elements in a row at the specified row in a 2D array. *)
+
     val dimensions : 'a t -> int * int
     (** [dimensions arr] returns the dimensions (rows, cols) of a 2D array. *)
 
