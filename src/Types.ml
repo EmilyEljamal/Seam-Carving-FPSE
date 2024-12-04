@@ -47,12 +47,16 @@ module Array_2d = struct
 
 end
 
-type image = float Array_2d.t
+type pixel = int * int * int
+
+type image = pixel Array_2d.t
 
 type energy_map = float Array_2d.t
 
 module Minimal_energy_map = struct
   type t = Pair.t Array_2d.t
+
+  (* Overwrite Init *)
 
   let from_energy_map (_energy_map : energy_map) : t =
     Array_2d.map (fun row col energy -> Pair.create energy 0) _energy_map
