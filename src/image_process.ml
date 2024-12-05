@@ -1,6 +1,6 @@
 open Types
 type pixel = int * int * int  (* Represented as (R, G, B) *)
-type image = pixel array array  (* 2D array of pixels *)
+type image = pixel Array_2d.t  (* 2D array of pixels *)
 let hot_pink = (255, 105, 180)
 (* Note: must save width and height and update it accordingly whenever a seam is removed *)
 (* Need to update image array type *)
@@ -26,7 +26,7 @@ module ImageProcess = struct
 
   let convert_rgb_to_pixels (temp_rgb_file: string) (width: int) (height: int): image =
     let ic = open_in_bin temp_rgb_file in
-    let pixels = Array_2d.init height width (fun x ->
+    let pixels = Array_2d.init height width (fun _ _ ->
       let r = input_byte ic in
       let g = input_byte ic in
       let b = input_byte ic in
