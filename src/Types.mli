@@ -30,8 +30,11 @@ sig
         - [cols]: The number of columns.
         - [f]: A function defining how each element is initialized. *)
 
-    val get : 'a t -> int -> int -> 'a
+    val get : 'a t -> int -> int -> 'a option
     (** [get arr x y] retrieves an element at the specified row and column in a 2D array. *)
+
+    val get_row : 'a t -> int -> 'a array option
+    (** [get_row arr x] retrieves the elements in a row at the specified row in a 2D array. *)
 
     val dimensions : 'a t -> int * int
     (** [dimensions arr] returns the dimensions (rows, cols) of a 2D array. *)
@@ -41,7 +44,7 @@ sig
         around the element at (x, y).
         - Returns: A list of adjacent elements. *)
 
-    val map : ('a -> 'b) -> 'a t -> 'b t
+    val map : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
     (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
 end
 
