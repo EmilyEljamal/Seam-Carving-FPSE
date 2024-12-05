@@ -17,7 +17,7 @@ module ImageProcess = struct
     | [width; height] -> (int_of_string width, int_of_string height)
     | _ -> failwith "Failed to parse dimensions"
 
-  let convert_image_to_rgb (filename: string) =
+  let convert_image_to_rgb (filename: string) : string =
     let temp_rgb_file = Filename.temp_file "image" ".rgb" in
     let command = Printf.sprintf "magick %s -depth 8 rgb:%s" filename temp_rgb_file in
     if Sys.command command <> 0 then
