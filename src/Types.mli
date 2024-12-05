@@ -48,8 +48,11 @@ sig
     (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
 end
 
-type image = float Array_2d.t
-(** Type alias for an image representation as a 2D array of floats. *)
+type pixel = int * int * int 
+(** Type alias for an pixel representation as a tuple of ints. *)
+
+type image = pixel Array_2d.t
+(** Type alias for an image representation as a 2D array of pixels (tuples). *)
 
 type energy_map = float Array_2d.t
 (** Type alias for an energy map representation as a 2D array of floats. *)
