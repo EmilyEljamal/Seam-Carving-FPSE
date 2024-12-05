@@ -44,3 +44,28 @@ let () =
     process_image num_steps
 
 
+    let () =
+    (* Substitute this with your actual image filename *)
+    let input_filename = "ocamlLibraryDemos/frames/frame_005.png" in
+    let output_filename = "ocamlLibraryDemos/frames/output.png" in
+  
+    (* Step 1: Load the image *)
+    Printf.printf "Loading image: %s\n" input_filename;
+    let image = load_image input_filename in
+  
+    (* Step 2: Generate a random seam (one random pixel per row) *)
+    let height = Array.length image in
+    let width = if height > 0 then Array.length image.(0) else 0 in
+    let random_seam = Array.init height (fun _ -> Random.int width) in
+  
+    (* Step 3: Draw the seam *)
+    Printf.printf "Drawing seam...\n";
+    let image_with_seam = draw_seam image random_seam in
+  
+    (* Step 4: Save the modified image *)
+    Printf.printf "Saving image: %s\n" output_filename;
+    save_pixels_as_image image_with_seam width height output_filename;
+  
+    Printf.printf "Image saved with seam highlighted: %s\n" output_filename
+
+
