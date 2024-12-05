@@ -23,23 +23,23 @@ sig
     type 'a t = 'a array array
     (** A 2D array type alias for general use in image and energy map representations. *)
 
-    val init : int -> int -> (int -> int -> 'a) -> 'a t
+    val init : rows: int -> cols: int -> (int -> int -> 'a) -> 'a t
     (** [init rows cols f] initializes a 2D array with the given dimensions, setting each element
         according to the function [f], which takes row and column indices.
         - [rows]: The number of rows.
         - [cols]: The number of columns.
         - [f]: A function defining how each element is initialized. *)
 
-    val get : 'a t -> int -> int -> 'a option
+    val get : arr: 'a t -> row: int -> col: int -> 'a option
     (** [get arr x y] retrieves an element at the specified row and column in a 2D array. *)
 
-    val get_row : 'a t -> int -> 'a array option
+    val get_row : arr: 'a t -> row: int -> 'a array option
     (** [get_row arr x] retrieves the elements in a row at the specified row in a 2D array. *)
 
-    val dimensions : 'a t -> int * int
+    val dimensions : arr: 'a t -> int * int
     (** [dimensions arr] returns the dimensions (rows, cols) of a 2D array. *)
 
-    val adjacents : 'a t -> int -> int -> 'a list
+    val adjacents : arr: 'a t -> row: int -> col: int -> 'a list
     (** [adjacents arr x y] retrieves all adjacent elements in the four main directions (up, down, left, right)
         around the element at (x, y).
         - Returns: A list of adjacent elements. *)
