@@ -51,12 +51,13 @@ module Array_2d = struct
       ]
       
 
-    let map (f : int -> int -> 'a -> 'b) (arr : 'a t) : 'b t =
-      Array.mapi ~f:(fun row row_array ->
-        Array.mapi ~f:(fun col value -> f row col value) row_array
-      ) arr
-      
+  let map (f : int -> int -> 'a -> 'b) (arr : 'a t) : 'b t =
+    Array.mapi arr ~f:(fun y r -> Array.mapi r ~f:(f y))
 
+  let mapi (f : int -> int -> 'a -> 'b) (arr : 'a t) : 'b t =
+    Array.mapi ~f:(fun row row_array ->
+      Array.mapi ~f:(fun col value -> f row col value) row_array
+    ) arr
 end
 
 type pixel = int * int * int
