@@ -5,8 +5,8 @@ module Pair :
       ; direction   : int } [@@deriving compare]
     (** The [Pair] type holds data for energy and direction, representing a single cell in the minimal energy map. *)
 
-    val create : float -> int -> t
-    (** [create energy direction] initializes a Pair with the given energy and direction values. *)
+    val create : in_energy: float -> in_direction: int -> t
+    (** [create ~energy ~direction] initializes a Pair with the given energy and direction values. *)
 
     val get_energy : t -> float
     (** [get_energy pair] retrieves the energy value from a Pair. *)
@@ -33,10 +33,10 @@ sig
     val get : arr: 'a t -> row: int -> col: int -> 'a option
     (** [get arr x y] retrieves an element at the specified row and column in a 2D array. *)
 
-    val get_row : arr: 'a t -> row: int -> 'a array option
+    val get_row : 'a t -> int -> 'a array option
     (** [get_row arr x] retrieves the elements in a row at the specified row in a 2D array. *)
 
-    val dimensions : arr: 'a t -> int * int
+    val dimensions : 'a t -> int * int
     (** [dimensions arr] returns the dimensions (rows, cols) of a 2D array. *)
 
     val adjacents : arr: 'a t -> row: int -> col: int -> 'a list

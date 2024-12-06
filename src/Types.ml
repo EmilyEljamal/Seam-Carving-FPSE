@@ -7,8 +7,8 @@ module Pair = struct
     direction : int;
   } [@@deriving compare]
 
-  let create (_energy : float) (_direction : int) : t =
-    { energy = _energy; direction = _direction }
+  let create ~in_energy ~in_direction : t =
+    { energy = in_energy; direction = in_direction }
 
   let get_energy (_pair : t) : float =
     _pair.energy
@@ -23,20 +23,20 @@ end
 module Array_2d = struct
   type 'a t = 'a array array
 
-  let init (rows : int) (cols : int) (f : int -> int -> 'a) : 'a t =
+  let init ~rows ~cols (f : int -> int -> 'a) : 'a t =
     Array.init rows ~f:(fun i -> Array.init cols ~f:(fun j -> f i j))
 
-  let get (arr : 'a t) (x : int) (y : int) : 'a option=
-    Option.try_with (fun () -> arr.(x).(y))
+  let get ~arr ~row ~col : 'a option=
+    Option.try_with (fun () -> arr.(row).(col))
 
-  let get_row (arr : 'a t) (x : int) : 'a array option =
+    let get_row (arr : 'a t) (x : int) : 'a array option =
     Option.try_with (fun () -> arr.(x))
 
-  let dimensions (arr : 'a t) : int * int =
+  let dimensions (arr: 'a array) : int * int =
     (Array.length arr.(0), Array.length arr)
 
-  let adjacents (arr : 'a t) (x : int) (y : int) : 'a list =
-    let g xo yo = get arr (x + xo) (y + yo) in
+  let adjacents ~arr ~row ~col : 'a list =
+    let g xo yo = get ~arr ~row:(row + xo) ~col:(col + yo) in
     List.filter_map ~f:Fn.id
       [
        g 0 (-1); g (-1) 0; g 1 0; g 0 1;
@@ -56,10 +56,8 @@ type energy_map = float Array_2d.t
 module Minimal_energy_map = struct
   type t = Pair.t Array_2d.t
 
-  (* Overwrite Init *)
-
   let from_energy_map (_energy_map : energy_map) : t =
-    Array_2d.map (fun row col energy -> Pair.create energy 0) _energy_map
+    Array_2d.map (fun row col energy -> Pair.create ~in_energy:energy ~in_direction:0) _energy_map
 
   let get_minimal_energy (_map : t) (_row : int) : int =
     match Array_2d.get_row _map _row with
@@ -71,10 +69,10 @@ module Minimal_energy_map = struct
         |> fst
 
   let update_direction (_map : t) (_row : int) (_col : int) (_direction : int) : unit =
-    match Array_2d.get _map _row _col with
+    match Array_2d.get ~arr:_map ~row:_row ~col:_col with
     | None -> failwith "Invalid row index"
     | Some pair ->
-      let updated_pair = Pair.create (Pair.get_energy pair) _direction in
+      let updated_pair = Pair.create ~in_energy:(Pair.get_energy pair) ~in_direction:_direction in
       _map.(_row).(_col) <- updated_pair
 
   let to_energy_map (_map : t) : energy_map =

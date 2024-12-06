@@ -1,22 +1,19 @@
 (library
  (name image_process)
- (public_name image_process)
  (modules image_process)
- (libraries core))
+ (libraries core types))
 
 (library
  (name seam_identification)
- (public_name seam_identification)
  (modules seam_identification)
- (libraries core))
+ (libraries core types))
 
 (library
  (name gif)
- (public_name gif)
  (modules gif)
- (libraries core))
+ (libraries core types))
 
 (library
  (name types)
- (public_name types)
- (modules types))
+ (modules types)
+ (libraries core))

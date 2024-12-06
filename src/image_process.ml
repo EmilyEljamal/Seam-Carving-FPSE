@@ -1,14 +1,11 @@
 open Types
-type pixel = int * int * int  (* Represented as (R, G, B) *)
-type image = pixel Array_2d.t  (* 2D array of pixels *)
 let hot_pink = (255, 105, 180)
 (* Note: must save width and height and update it accordingly whenever a seam is removed *)
-(* Need to update image array type *)
 
 
 module ImageProcess = struct
 
-  let get_dimensions (filename: string) =
+  let get_dimensions (filename: string): int * int =
     let command = Printf.sprintf "identify -format \"%%w %%h\" %s" filename in
     let ic = Unix.open_process_in command in
     let dimensions = input_line ic in
@@ -24,9 +21,9 @@ module ImageProcess = struct
       failwith "Failed to convert image to raw RGB";
     temp_rgb_file
 
-  let convert_rgb_to_pixels (temp_rgb_file: string) (width: int) (height: int): image =
+  let convert_rgb_to_pixels ~temp_rgb_file ~width ~height : image =
     let ic = open_in_bin temp_rgb_file in
-    let pixels = Array_2d.init height width (fun _ _ ->
+    let pixels = Array_2d.init ~rows:height ~cols:width (fun _ _ ->
       let r = input_byte ic in
       let g = input_byte ic in
       let b = input_byte ic in
@@ -39,10 +36,10 @@ module ImageProcess = struct
   let load_image (filename : string) : image =
       let width, height = get_dimensions filename in
       let temp_rgb_file = convert_image_to_rgb filename in
-      let pixels = convert_rgb_to_pixels temp_rgb_file width height in
+      let pixels = convert_rgb_to_pixels ~temp_rgb_file ~width ~height in
       pixels
     
-  let save_pixels_as_image (pixels: image) (width: int) (height: int) (output_filename: string) =
+  let save_pixels_as_image ~pixels ~width ~height ~output_filename =
     let temp_rgb_file = Filename.temp_file "screenshot" ".rgb" in
     let oc = open_out_bin temp_rgb_file in
     Array.iter (fun row ->
@@ -68,9 +65,9 @@ module ImageProcess = struct
 
     let calculate_energy_map (img : image) : energy_map =
       let rows, cols = Array_2d.dimensions img in
-      Array_2d.init rows cols (fun x y ->
+      Array_2d.init ~rows:rows ~cols:cols (fun x y ->
         let get_neighbor offset_x offset_y =
-          Array_2d.get img (x + offset_x) (y + offset_y)
+          Array_2d.get ~arr:img ~row:(x + offset_x) ~col:(y + offset_y)
           |> Option.value ~default:(0, 0, 0)  
       in
 

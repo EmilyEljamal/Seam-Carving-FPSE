@@ -1,26 +1,25 @@
 (lang dune 3.16)
 
-(name seam_carving)
-
 (generate_opam_files true)
-
-(source
- (github username/reponame))
 
 (authors "Author Name")
 
-(maintainers "Maintainer Name")
-
-(license LICENSE)
-
-(documentation https://url/to/documentation)
+(maintainers "maintainer@example.com")
 
 (package
- (name seam_carving)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml dune)
- (tags
-  (topics "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
+ (name seam_carving) ; updated with your project name
+ (allow_empty)
+ (synopsis "An OCaml library for seam carving and image processing.")
+ (description
+  "An OCaml library for advanced image manipulation and seam carving techniques.")
+ (depends
+  (ocaml
+   (>= 4.12.0)) ; specify the minimum OCaml version your project supports
+  (dune
+   (>= 3.0))
+  (core
+   (>= 0.17.1)) ; include dependencies as needed
+  (ounit2
+   (>= 2.2.7)) ; example dependency for testing
+               ; Add any external opam packages here
+  ))
