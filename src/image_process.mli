@@ -1,34 +1,40 @@
 open Types
 
+(** The [ImageProcess] module provides functionality for image manipulation, 
+    including loading images, converting them to RGB pixel data, and processing energy maps. *)
+
 module ImageProcess : sig
+  (** [get_dimensions filename] retrieves the dimensions (width, height) of the image file. *)
+  val get_dimensions : string -> int * int
 
-    (** [get_dimensions filename] returns the width and height of the image
-        specified by [filename]. *)
-    val get_dimensions : filename: string -> int * int
+  (** [convert_image_to_rgb filename] converts an image file to a raw RGB format and saves it as a temporary file. *)
+  val convert_image_to_rgb : string -> string
 
-    val convert_image_to_rgb : filename: string -> string
+  (** [convert_rgb_to_pixels ~temp_rgb_file ~width ~height] converts a raw RGB file into a pixel array. *)
+  val convert_rgb_to_pixels : temp_rgb_file:string -> width:int -> height:int -> image
 
-    val convert_rgb_to_pixels : temp_rgb_file: string -> width: int -> height: int -> image
-  
-    (** [load_image filename] loads an image from the specified [filename] and
-        returns a 2D array of pixels representing the image. *)
-    val load_image : filename: string -> image
+  (** [load_image filename] loads an image from a file and converts it into a pixel array. *)
+  val load_image : string -> image
 
-    val calculate_energy_map : img : image -> energy_map
-  
-    (** [save_pixels_as_image pixels width height output_filename] saves a 2D array
-        of pixels as an image with the given [width] and [height] to the specified
-        [output_filename]. *)
-    val save_pixels_as_image : 
-      pixels: image -> width: int -> height: int -> filename: string -> unit
-  
-    (** [draw_seam img seam] takes an image [img] and an array [seam] representing
-        the indices of a vertical seam to highlight, and returns a new image with
-        the seam drawn in hot pink. *)
-    val draw_seam : img: image -> seam: int array -> image
-  
-    (** [remove_seam img seam] removes the specified seam from the image [img]. *)
-    val remove_seam : img: image -> seam: int array -> image
-  
-  end
-  
+  (** [save_pixels_as_image ~pixels ~width ~height ~output_filename] saves a pixel array as an image file. *)
+  val save_pixels_as_image : 
+    pixels:image -> width:int -> height:int -> output_filename:string -> unit
+
+  (** [fst3 (r, _, _)] retrieves the first component of an RGB tuple. *)
+  val fst3 : int * int * int -> int
+
+  (** [snd3 (_, g, _)] retrieves the second component of an RGB tuple. *)
+  val snd3 : int * int * int -> int
+
+  (** [trd3 (_, _, b)] retrieves the third component of an RGB tuple. *)
+  val trd3 : int * int * int -> int
+
+  (** [calculate_energy_map img] calculates the energy map of an image using gradient magnitude. *)
+  val calculate_energy_map : image -> energy_map
+
+  (** [draw_seam img seam] highlights a seam in the image by drawing it in a specified color. *)
+  val draw_seam : image -> int array -> image
+
+  (** [remove_seam img seam width] removes a seam from the image, reducing its width by 1. *)
+  val remove_seam : image -> int array -> int -> image
+end

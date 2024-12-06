@@ -1,8 +1,4 @@
 (executable
  (public_name seam_carving)
  (name main)
- (libraries 
-   seam_carving 
-   core
-   core_unix
-   core_unix.sys_unix))
+ (libraries core core_unix image_process seam_identification gif types))
