@@ -1,5 +1,22 @@
 (library
- (name seam_carving)
- (public_name seam_carving)
- (modules image_process seam_identification gif types)
+ (name image_process)
+ (public_name image_process)
+ (modules image_process)
  (libraries core))
+
+(library
+ (name seam_identification)
+ (public_name seam_identification)
+ (modules seam_identification)
+ (libraries core))
+
+(library
+ (name gif)
+ (public_name gif)
+ (modules gif)
+ (libraries core))
+
+(library
+ (name types)
+ (public_name types)
+ (modules types))
