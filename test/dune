@@ -6,5 +6,6 @@
     ounit2
     types
     image_process
+    seam_identification
   )
-  (preprocess (pps bisect_ppx)))
+ (preprocess (pps ppx_jane)))

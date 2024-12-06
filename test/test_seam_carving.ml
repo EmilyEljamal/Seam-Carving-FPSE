@@ -2,6 +2,7 @@ open OUnit2
 open Core
 open Types
 
+
 (* Test for Pair module *)
 let test_pair _ =
   let pair = Pair.create ~in_energy:10.5 ~in_direction:1 in
@@ -29,11 +30,17 @@ let test_minimal_energy_map _ =
   let energy_map = Array_2d.init ~rows:3 ~cols:3 (fun _ _ -> 5.0) in
   let min_energy_map = Minimal_energy_map.from_energy_map energy_map in
   assert_equal (Minimal_energy_map.get_minimal_energy min_energy_map 0) 0 ~msg:"Minimal energy retrieval failed";
+  assert_raises (Failure "Invalid row index") (fun () ->
+    Minimal_energy_map.get_minimal_energy min_energy_map 4
+  ) ~msg:"Invalid row index failed for get minimal energy";
   assert_equal (Minimal_energy_map.to_energy_map min_energy_map) energy_map ~msg:"To energy map failed";
   Minimal_energy_map.update_direction min_energy_map 0 0 1;
   match Array_2d.get ~arr:min_energy_map ~row:0 ~col:0 with
-  | Some pair -> assert_equal (Pair.get_direction pair) 1 ~msg:"Direction update failed"
   | None -> assert_failure "Pair not found in energy map"
+  | Some pair -> assert_equal (Pair.get_direction pair) 1 ~msg:"Direction update failed";
+  assert_raises (Failure "Invalid row index") (fun () ->
+    Minimal_energy_map.update_direction min_energy_map 4 4 10
+  ) ~msg:"Invalid row index failed for update direction"
   
 (* Test suite *)
 let suite =
