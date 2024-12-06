@@ -57,6 +57,11 @@ sig
     (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
 
     val mapi : (int -> int -> 'a -> 'b) -> 'a t -> 'b t 
+    (** [mapi f arr] applies the function [f] to each element in the 2D array [arr], along with its row and column indices.
+    - [f row col value]: A function that takes the row index [row], column index [col], and the value [value] at that position.
+    - [arr]: The input 2D array.
+    - Returns: A new 2D array with the results of applying [f] to each element.
+    *)
 end
 
 type pixel = int * int * int 
