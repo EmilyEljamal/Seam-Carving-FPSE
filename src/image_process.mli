@@ -36,5 +36,5 @@ module ImageProcess : sig
   val draw_seam : image -> int array -> image
 
   (** [remove_seam img seam width] removes a seam from the image, reducing its width by 1. *)
-  val remove_seam : image -> int array -> int -> image
+  val remove_seams : image -> int -> image list -> image list
 end
