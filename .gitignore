@@ -1,5 +1,6 @@
 # Ignore Dune build artifacts
 _build/
+_coverage/
 
 # Ignore executable and other output files
 *.exe

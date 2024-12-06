@@ -29,8 +29,8 @@ module Array_2d = struct
   let get ~arr ~row ~col : 'a option=
     Option.try_with (fun () -> arr.(row).(col))
 
-    let get_row (arr : 'a t) (x : int) : 'a array option =
-    Option.try_with (fun () -> arr.(x))
+    let get_row (arr : 'a t) (row : int) : 'a array option =
+    Option.try_with (fun () -> arr.(row))
 
   let dimensions (arr: 'a array) : int * int =
     (Array.length arr.(0), Array.length arr)
@@ -39,7 +39,7 @@ module Array_2d = struct
     let g xo yo = get ~arr ~row:(row + xo) ~col:(col + yo) in
     List.filter_map ~f:Fn.id
       [
-       g 0 (-1); g (-1) 0; g 1 0; g 0 1;
+       g 0 (-1); g 0 1; g (-1) 0; g 1 (0);
       ]
   let bottom_neighbors ~arr ~row ~col : 'a list =
     let g xo yo = get ~arr ~row:(row + xo) ~col:(col + yo) in
