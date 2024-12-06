@@ -53,9 +53,10 @@ sig
     
         If any of these positions are out of bounds, they are skipped, so the returned list may have fewer than three elements. *)
         
-
     val map : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
     (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
+
+    val mapi : (int -> int -> 'a -> 'b) -> 'a t -> 'b t 
 end
 
 type pixel = int * int * int 
