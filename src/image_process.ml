@@ -97,13 +97,23 @@ module ImageProcess = struct
         ) img
 
 
-    let remove_seam (img: image) (seam: int array) (width: int): image =
+    (* let remove_seam (img: image) (seam: int array) (width: int): image =
       let new_width = width - 1 in
       Array.mapi (fun y row ->
         Array.init new_width (fun x ->
           if x = seam.(y) then row.(x) else row.(x + 1)
         )
-      ) img;
+      ) img; *)
 
+    let rec remove_seams (img: image) (num_seams: int) (images: image list) : image list =
+      if num_seams = 0 then 
+        List.rev images 
+      else
+        let energy_map = calculate_energy_map img in
+        let minimal_energy = Seam_identification.calc_minimal_energy_to_bottom energy_map in
+        let seam = Seam_identification.find_vertical_seam minimal_energy in
+        let img_with_seam = draw_seam img seam in
+        let img_without_seam = Seam_identification.remove_vertical_seam img seam in
+        remove_seams img_without_seam (num_seams - 1) (img_with_seam :: img_without_seam :: images)
 
 end

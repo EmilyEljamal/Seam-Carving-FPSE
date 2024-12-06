@@ -1,7 +1,7 @@
 (library
  (name image_process)
  (modules image_process)
- (libraries core types))
+ (libraries core types seam_identification))
 
 (library
  (name seam_identification)
