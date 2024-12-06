@@ -1,2 +1,10 @@
 (test
- (name test_seam_carving))
+  (name test_seam_carving)
+  (modules test_seam_carving)
+  (libraries
+    core
+    ounit2
+    types
+    image_process
+  )
+  (preprocess (pps bisect_ppx)))
