@@ -8,10 +8,10 @@ let calc_minimal_energy_to_bottom (_energy_map: energy_map) : Minimal_energy_map
   (* for each cell check adding cell value to each bottom neighbor *)
   (* save the min value of the 3 and its corresponding direction into a new map*)
 
-let find_vertical_seam (_minimal_energy_map: Minimal_energy_map.t) : int list =
+let find_vertical_seam (_minimal_energy_map: Minimal_energy_map.t) : int array =
   failwith "Not implemented yet"
   (* pick the top row value with the min value *)
   (* use the direction to build the int list from there *)
 
-let remove_vertical_seam (_image: Types.image) (_seam: int list) : image =
+let remove_vertical_seam (_image: image) (_seam: int array) : image =
   failwith "Not implemented yet"
