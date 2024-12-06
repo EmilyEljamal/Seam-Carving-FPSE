@@ -1,19 +1,23 @@
 (library
  (name image_process)
  (modules image_process)
- (libraries core types seam_identification))
+ (libraries core types seam_identification)
+ (preprocess (pps bisect_ppx)))
 
 (library
  (name seam_identification)
  (modules seam_identification)
- (libraries core types))
+ (libraries core types)
+ (preprocess (pps bisect_ppx)))
 
 (library
  (name gif)
  (modules gif)
- (libraries core types))
+ (libraries core types)
+ (preprocess (pps bisect_ppx)))
 
 (library
  (name types)
  (modules types)
- (libraries core))
+ (libraries core)
+ (preprocess (pps bisect_ppx)))
