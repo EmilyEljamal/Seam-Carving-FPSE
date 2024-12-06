@@ -44,6 +44,16 @@ sig
         around the element at (x, y).
         - Returns: A list of adjacent elements. *)
 
+    val bottom_neighbors : arr:'a t -> row:int -> col:int -> 'a list
+    (** [bottom_neighbors ~arr ~row ~col] returns a list of the three bottom neighbors of the cell at position [(row, col)] in [arr].
+        The bottom neighbors are the cells directly below and diagonally below to the left and right, specifically:
+        - SW (row+1, col-1)
+        - S  (row+1, col)
+        - SE (row+1, col+1)
+    
+        If any of these positions are out of bounds, they are skipped, so the returned list may have fewer than three elements. *)
+        
+
     val map : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
     (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
 end
@@ -79,4 +89,10 @@ sig
 
     val to_energy_map : t -> energy_map
     (** [to_energy_map map] converts a minimal energy map back to a standard energy map (float Array_2d). *)
+
+    val iteri_bottom_to_top : t -> f:(int -> int -> Pair.t -> Pair.t) -> t
+    (** [iteri_bottom_to_top map ~f] iterates over the minimal energy map starting from the bottom row up to the top row,
+        and from left to right within each row. For each element, it calls [f ~row ~col pair].
+        - [map]: The minimal energy map.
+        - [f]: A function receiving ~row, ~col, and the [Pair.t] at that position. *)
 end
