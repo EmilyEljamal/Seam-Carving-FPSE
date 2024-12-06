@@ -2,9 +2,15 @@ open Types
 
 let calc_minimal_energy_to_bottom (_energy_map: energy_map) : Minimal_energy_map.t =
   failwith "Not implemented yet"
+  (* copy the bottom row using Array.copy *)
+  (* bottom to top, left to right  using Array rev*)
+  (* for each cell check adding cell value to each bottom neighbor *)
+  (* save the min value of the 3 and its corresponding direction into a new map*)
 
 let find_vertical_seam (_minimal_energy_map: Minimal_energy_map.t) : int list =
   failwith "Not implemented yet"
+  (* pick the top row value with the min value *)
+  (* use the direction to build the int list from there *)
 
 let remove_vertical_seam (_image: Types.image) (_seam: int list) : image =
   failwith "Not implemented yet"
