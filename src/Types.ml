@@ -33,7 +33,7 @@ module Array_2d = struct
     Option.try_with (fun () -> arr.(row))
 
   let dimensions (arr: 'a array) : int * int =
-    (Array.length arr.(0), Array.length arr)
+    (Array.length arr, Array.length arr.(0))
 
   let adjacents ~arr ~row ~col : 'a list =
     let g xo yo = get ~arr ~row:(row + xo) ~col:(col + yo) in

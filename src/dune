@@ -1,7 +1,7 @@
 (library
  (name image_process)
  (modules image_process)
- (libraries core types seam_identification)
+ (libraries core types seam_identification imagelib imagelib.unix)
  (preprocess (pps bisect_ppx)))
 
 (library
@@ -13,7 +13,7 @@
 (library
  (name gif)
  (modules gif)
- (libraries core types)
+ (libraries core core_unix.sys_unix core_unix imagelib imagelib.unix types)
  (preprocess (pps bisect_ppx)))
 
 (library
