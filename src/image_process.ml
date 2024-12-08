@@ -1,10 +1,10 @@
 open Types
+
 let hot_pink = (255, 105, 180)
 (* Note: must save width and height and update it accordingly whenever a seam is removed *)
 
 
 module ImageProcess = struct
-
   let get_dimensions (filename: string): int * int =
     let command = Printf.sprintf "identify -format \"%%w %%h\" %s" filename in
     let ic = Unix.open_process_in command in
@@ -90,12 +90,25 @@ module ImageProcess = struct
     )
     
     let draw_seam (img : image) (seam : int array) : image =
-        Array.mapi (fun y row ->
-          Array.mapi (fun x pixel ->
-            if x = seam.(y) then hot_pink else pixel
-          ) row
-        ) img
+      let height, width = Array_2d.dimensions img in
 
+      (* Debug output for dimensions *)
+      Printf.printf "Dimensions during drawing seam: height = %d, width = %d\n" height width;
+    
+      (* Ensure the seam length matches the image height *)
+      if Array.length seam <> height then
+        failwith (Printf.sprintf "Seam length mismatch: expected %d, got %d" height (Array.length seam));
+    
+      (* Validate each seam index *)
+      Array.iteri (fun row col ->
+        if col < 0 || col >= width then
+          failwith (Printf.sprintf "Invalid seam index at row %d: %d (width = %d)" row col width)
+      ) seam;
+    
+      (* Draw the seam *)
+      Array_2d.mapi (fun row col pixel ->
+        if col = seam.(row) then hot_pink else pixel
+      ) img
 
     (* let remove_seam (img: image) (seam: int array) (width: int): image =
       let new_width = width - 1 in
@@ -104,16 +117,53 @@ module ImageProcess = struct
           if x = seam.(y) then row.(x) else row.(x + 1)
         )
       ) img; *)
+      (* let print_minimal_energy_map (minimal_energy_map : Minimal_energy_map.t) : unit =
+        let height, width = Array_2d.dimensions minimal_energy_map in
+        for row = 0 to height - 1 do
+          for col = 0 to width - 1 do
+            match Array_2d.get ~arr:minimal_energy_map ~row ~col with
+            | Some pair -> 
+                let energy = Pair.get_energy pair in
+                let direction = Pair.get_direction pair in
+                Printf.printf "Energy at (%d, %d): %f, Direction: %d\n" row col energy direction
+            | None -> 
+                Printf.printf "Energy at (%d, %d) is out of bounds\n" row col
+          done;
+        done *)
 
-    let rec remove_seams (img: image) (num_seams: int) (images: image list) : image list =
-      if num_seams = 0 then 
-        List.rev images 
+    let rec remove_seams (img: image) (num_seams: int) : image list =
+      if num_seams = 0 then []
       else
         let energy_map = calculate_energy_map img in
         let minimal_energy = Seam_identification.calc_minimal_energy_to_bottom energy_map in
+        Printf.printf "One pass removing seam:\n";
+        (* print_minimal_energy_map minimal_energy; *)
         let seam = Seam_identification.find_vertical_seam minimal_energy in
         let img_with_seam = draw_seam img seam in
         let img_without_seam = Seam_identification.remove_vertical_seam img seam in
-        remove_seams img_without_seam (num_seams - 1) (img_with_seam :: img_without_seam :: images)
-
+        img_with_seam :: img_without_seam :: (remove_seams img_without_seam (num_seams - 1))
 end
+
+        (* let default_seam (img: image) : int array =
+          let height, _ = Array_2d.dimensions img in
+          Array.init height (fun _ -> 2) Seam at column 2 for all rows *)
+        
+          
+
+        (* let rec remove_seams (img: image) (num_seams: int) : image list =
+          if num_seams = 0 then []
+          else
+            (* Use default seam for testing *)
+            let seam = default_seam img in
+
+            let height, width = Array_2d.dimensions img in
+            Printf.printf "Dimensions before removing seam: height = %d, width = %d\n" height width;
+            Printf.printf "One pass removing seam:\n";
+            (* print_image img; *)
+
+            let img_with_seam = draw_seam img seam in
+            let img_without_seam = Seam_identification.remove_vertical_seam img seam in
+
+            let new_height, new_width = Array_2d.dimensions img_without_seam in
+            Printf.printf "Dimensions after removing seam: height = %d, width = %d\n" new_height new_width;
+            img_with_seam :: img_without_seam :: (remove_seams img_without_seam (num_seams - 1)) *)
