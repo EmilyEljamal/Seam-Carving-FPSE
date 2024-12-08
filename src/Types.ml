@@ -108,13 +108,13 @@ module Minimal_energy_map = struct
       done;;   *)
   (* Avoiding Mutation - reverse in place *)
   let iteri_bottom_to_top (arr : t) ~(f : int -> int -> Pair.t -> Pair.t) : t =
-    let arr_copy = Array.copy arr in
-    Array.rev_inplace arr_copy;
-    let updated_map = 
-      Array.mapi ~f:(fun row row_array ->
-        Array.mapi ~f:(fun col value -> f row col value) row_array
-      ) arr_copy
-    in
-    updated_map
+    let rows = Array.length arr in
+  let cols = if rows > 0 then Array.length arr.(0) else 0 in
+  Array.init rows ~f:(fun reversed_row ->
+    let original_row = rows - 1 - reversed_row in
+    Array.init cols ~f:(fun col ->
+      f original_row col arr.(original_row).(col)
+    )
+  )
   
 end
