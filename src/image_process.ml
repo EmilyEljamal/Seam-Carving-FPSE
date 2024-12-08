@@ -131,6 +131,7 @@ module ImageProcess = struct
           done;
         done *)
 
+        
     let rec remove_seams (img: image) (num_seams: int) : image list =
       if num_seams = 0 then []
       else
