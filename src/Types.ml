@@ -58,6 +58,12 @@ module Array_2d = struct
     Array.mapi ~f:(fun row row_array ->
       Array.mapi ~f:(fun col value -> f row col value) row_array
     ) arr
+
+    (* let get_top_neighbors ~arr ~row ~col : ('a option * 'a option * 'a option) = 
+      let top_left = if col > 0 then get ~arr ~row:(row - 1) ~col:(col - 1) else None in 
+      let top = get ~arr ~row:(row - 1) ~col in 
+      let top_right = if col < Array.length arr.(0) - 1 then get ~arr ~row:(row - 1) ~col:(col + 1) else None 
+    in (top_left, top, top_right) *)
 end
 
 type pixel = int * int * int
@@ -109,12 +115,12 @@ module Minimal_energy_map = struct
   (* Avoiding Mutation - reverse in place *)
   let iteri_bottom_to_top (arr : t) ~(f : int -> int -> Pair.t -> Pair.t) : t =
     let rows = Array.length arr in
-  let cols = if rows > 0 then Array.length arr.(0) else 0 in
-  Array.init rows ~f:(fun reversed_row ->
-    let original_row = rows - 1 - reversed_row in
-    Array.init cols ~f:(fun col ->
-      f original_row col arr.(original_row).(col)
+    let cols = if rows > 0 then Array.length arr.(0) else 0 in
+    Array.init rows ~f:(fun reversed_row ->
+      let original_row = rows - 1 - reversed_row in
+      Array.init cols ~f:(fun col ->
+        f original_row col arr.(original_row).(col)
+      )
     )
-  )
   
 end
