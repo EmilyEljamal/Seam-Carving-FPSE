@@ -1,4 +1,4 @@
-[@@@ocaml.warning "-26"]
+(* [@@@ocaml.warning "-26"]
 [@@@ocaml.warning "-27"]
 open Core
 
@@ -13,7 +13,7 @@ let () =
       Gif.Gif.make_gif result_images output_path
       ) (* Temporary unit placeholder *)
 | _ ->
-  Printf.printf "No image path provided" 
+  Printf.printf "No image path provided"  *)
 
 (*
   load image
@@ -22,3 +22,15 @@ let () =
   get vertical seam
   remove seam
 *)
+
+[@@@ocaml.warning "-26"]
+[@@@ocaml.warning "-27"]
+open Core
+
+let () =
+  match Sys.get_argv () |> Array.to_list with
+  | _ :: input_path :: num_seams_str :: output_path :: [] ->
+      let num_seams = int_of_string num_seams_str in
+      Processing.process_image ~input_path ~num_seams ~output_path
+  | _ ->
+      Printf.printf "Usage: seam_carving <input_path> <num_seams> <output_path>\n"

@@ -1,4 +1,10 @@
 (executable
  (public_name seam_carving)
  (name main)
- (libraries core core_unix image_process seam_identification gif types))
+ (libraries core seam_carving.processing seam_carving.image_process seam_carving.seam_identification seam_carving.gif seam_carving.types))
+
+(executable
+ (public_name seam_carving_server)
+ (name server) ;; Points to bin/server.ml
+ (libraries core dream seam_carving.processing seam_carving.image_process seam_carving.seam_identification seam_carving.gif seam_carving.types)
+ (preprocess (pps lwt_ppx))) ;; Required for `let%lwt`

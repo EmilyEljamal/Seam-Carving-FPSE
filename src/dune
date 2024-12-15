@@ -1,23 +1,34 @@
 (library
  (name image_process)
+ (public_name seam_carving.image_process)
  (modules image_process)
  (libraries core types seam_identification imagelib imagelib.unix)
  (preprocess (pps bisect_ppx)))
 
 (library
  (name seam_identification)
+ (public_name seam_carving.seam_identification)
  (modules seam_identification)
  (libraries core types)
  (preprocess (pps bisect_ppx)))
 
 (library
  (name gif)
+ (public_name seam_carving.gif)
  (modules gif)
  (libraries core core_unix.sys_unix core_unix imagelib imagelib.unix types)
  (preprocess (pps bisect_ppx)))
 
 (library
  (name types)
+ (public_name seam_carving.types)
  (modules types)
  (libraries core)
  (preprocess (pps bisect_ppx)))
+
+(library
+ (name processing)
+ (public_name seam_carving.processing)
+ (modules processing)
+ (libraries core dream seam_carving.image_process seam_carving.seam_identification seam_carving.gif seam_carving.types))
+

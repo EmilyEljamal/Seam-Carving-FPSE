@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Processing</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Image Processing Tool</h1>
+  <div id="drop-area">
+    <p>Drag and drop your image here</p>
+    <input type="file" id="file-input" hidden>
+    <button id="file-button">Or select a file</button>
+  </div>
+  <div id="output">
+    <img id="processed-image" alt="Processed GIF will appear here">
+    <a id="download-link" href="#" download="processed.gif">Download Processed Image</a>
+  </div>
+  <script src="/static/script.js" defer></script>
+</body>
+</html>
