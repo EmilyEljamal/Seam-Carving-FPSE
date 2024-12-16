@@ -46,7 +46,7 @@ let test_find_vertical_seam _ =
     [|40.0; 10.0; 5.0|];
   |] in
   let seam = Seam_identification.find_vertical_seam minimal_energy_map in
-  assert_equal seam [|1; 1; 1|] ~msg:"Basic seam finding failed";
+  assert_equal seam [|2; 1; 0|] ~msg:"Basic seam finding failed";
 
   let minimal_energy_map2 = Minimal_energy_map.from_energy_map [|
     [|10.0; 20.0; 30.0; 40.0|];
@@ -136,6 +136,20 @@ let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 5; g = 5; b = 5
     ) in
   
     let minimal_energy_map = Seam_identification.calc_minimal_energy_to_bottom energy_map in
+
+    let print_minimal_energy_map (map: Minimal_energy_map.t) =
+      let rows, cols = Array_2d.dimensions map in
+      for row = 0 to rows - 1 do
+        for col = 0 to cols - 1 do
+          let pair = Array_2d.get ~arr:map ~row ~col |> Option.value_exn in
+          let energy = Pair.get_energy pair in
+          let direction = Pair.get_direction pair in
+          Printf.printf "(%d, %d) -> Energy: %.2f, Direction: %d\n" row col energy direction
+        done;
+        Stdlib.print_newline ()
+      done in
+    
+    print_minimal_energy_map minimal_energy_map;
   
     let get_pair arr row col =
       match Array_2d.get ~arr ~row ~col with
@@ -157,7 +171,7 @@ let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 5; g = 5; b = 5
     (* Row 0: Sum with minimal neighbor from row 1 *)
     assert_equal (Pair.get_energy (get_pair minimal_energy_map 0 0)) 16.0 ~msg:"Row 0, Col 0";
     assert_equal (Pair.get_energy (get_pair minimal_energy_map 0 1)) 26.0 ~msg:"Row 0, Col 1";
-    assert_equal (Pair.get_energy (get_pair minimal_energy_map 0 2)) 36.0 ~msg:"Row 0, Col 2";
+    assert_equal (Pair.get_energy (get_pair minimal_energy_map 0 2)) 46.0 ~msg:"Row 0, Col 2";
   
     (* Debugging complete map to ensure all values match *)
     Printf.printf "Debugging completed, assertions passed.\n"

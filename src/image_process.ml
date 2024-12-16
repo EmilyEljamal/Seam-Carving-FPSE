@@ -56,7 +56,7 @@ module ImageProcess = struct
       failwith "Failed to save screenshot";
     Sys.remove temp_rgb_file
 
-  let calculate_energy_map (mask : (int * int) list option) (img : image) : energy_map =
+  let calculate_energy_map ~(object_removal: bool) (mask : (int * int) list option) (img : image) : energy_map =
     let rows, cols = Array_2d.dimensions img in
   
     let is_in_mask x y =
@@ -66,7 +66,7 @@ module ImageProcess = struct
     in
     
     Array_2d.init ~rows ~cols (fun x y ->
-      if is_in_mask x y then
+      if object_removal && is_in_mask x y then
         Float.neg_infinity
       else
         let get_neighbor dir_x dir_y =
@@ -93,7 +93,7 @@ module ImageProcess = struct
     )
 
     let draw_seam (img : image) (seam : int array) : image =
-      let height, width = Array_2d.dimensions img in
+      let height, _ = Array_2d.dimensions img in
 
       if Array.length seam <> height then
         failwith (Printf.sprintf "Seam length mismatch: expected %d, got %d" height (Array.length seam));
@@ -106,7 +106,7 @@ module ImageProcess = struct
     let rec remove_seams (img: image) (num_seams: int) : image list =
       if num_seams = 0 then []
       else
-        let energy_map = calculate_energy_map None img in
+        let energy_map = calculate_energy_map ~object_removal:false None img in
         let minimal_energy = Seam_identification.calc_minimal_energy_to_bottom energy_map in
         let seam = Seam_identification.find_vertical_seam minimal_energy in
         let img_with_seam = draw_seam img seam in
@@ -131,7 +131,7 @@ module ImageProcess = struct
     let rec remove_object (img: image) (mask: (int * int) list) (seams: int array list) : (int array list * image list) =
       if List.is_empty mask then (seams, [])
       else
-        let energy_map = calculate_energy_map (Some mask) img in
+        let energy_map = calculate_energy_map ~object_removal:true (Some mask) img in
         let minimal_energy = Seam_identification.calc_minimal_energy_to_bottom energy_map in
         let seam = Seam_identification.find_vertical_seam minimal_energy in
         let img_with_seam = draw_seam img seam in
@@ -152,15 +152,17 @@ module ImageProcess = struct
         let drawn_img = draw_seam img seam in
         let img_with_seam = add_seam img seam in 
         drawn_img :: img_with_seam :: (add_stored_seams img_with_seam rest)
-  
-end
 
-(* let rec add_seams (img: image) (width: int) (new_width: int) : image list =
+    let rec add_seams (img: image) (width: int) (new_width: int) : image list =
       if (width = new_width) then []
       else 
-        let energy = calculate_energy_map None img in
+        let energy = calculate_energy_map ~object_removal:false None img in
         let min_map = Seam_identification.calc_minimal_energy_to_bottom energy in
         let seam = Seam_identification.find_vertical_seam min_map in
         let drawn_img = draw_seam img seam in
         let img_with_seam = add_seam img seam in
-        drawn_img :: img_with_seam :: (add_seams img_with_seam width (new_width + 1)) *)
+        drawn_img :: img_with_seam :: (add_seams img_with_seam width (new_width + 1)) 
+  
+end
+
+

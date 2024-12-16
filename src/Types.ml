@@ -30,7 +30,7 @@ module Array_2d = struct
     Option.try_with (fun () -> arr.(row).(col))
 
   let get_row (arr : 'a t) (row : int) : 'a array option =
-  ` Option.try_with (fun () -> arr.(row))
+  Option.try_with (fun () -> arr.(row))
 
   let dimensions (arr: 'a array) : int * int =
     (Array.length arr, Array.length arr.(0))
