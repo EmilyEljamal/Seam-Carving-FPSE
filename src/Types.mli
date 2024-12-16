@@ -44,14 +44,16 @@ sig
         around the element at (x, y).
         - Returns: A list of adjacent elements. *)
 
-    val bottom_neighbors : arr:'a t -> row:int -> col:int -> 'a list
-    (** [bottom_neighbors ~arr ~row ~col] returns a list of the three bottom neighbors of the cell at position [(row, col)] in [arr].
-        The bottom neighbors are the cells directly below and diagonally below to the left and right, specifically:
-        - SW (row+1, col-1)
-        - S  (row+1, col)
-        - SE (row+1, col+1)
-    
-        If any of these positions are out of bounds, they are skipped, so the returned list may have fewer than three elements. *)
+        
+val top_neighbors : arr:'a t -> row:int -> col:int -> 'a list
+(** [top_neighbors ~arr ~row ~col] returns a list of the three top neighbors of the cell at position [(row, col)] in [arr].
+    The top neighbors are the cells directly above and diagonally above to the left and right:
+    - NW (row-1, col-1)
+    - N  (row-1, col)
+    - NE (row-1, col+1)
+
+    If a neighbor is out of bounds, it is excluded from the list.
+*)
         
     val map : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
     (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
