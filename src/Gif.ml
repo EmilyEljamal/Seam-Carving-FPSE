@@ -9,7 +9,7 @@ module Gif = struct
     let out_channel = Stdlib.open_out_bin temp_filename in
     Printf.fprintf out_channel "P6\n%d %d\n255\n" cols rows;
     Array.iter frame ~f:(fun row ->
-      Array.iter row ~f:(fun (r, g, b) ->
+      Array.iter row ~f:(fun {r; g; b} ->
         Stdlib.output_byte out_channel r;
         Stdlib.output_byte out_channel g;
         Stdlib.output_byte out_channel b;

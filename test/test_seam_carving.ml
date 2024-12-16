@@ -89,33 +89,39 @@ let test_find_vertical_seam _ =
 let test_remove_vertical_seam _ =
   let image = Array_2d.init ~rows:3 ~cols:3 (fun i j ->
     match i with
-    | 0 -> if j = 0 then (255, 0, 0) else if j = 1 then (0, 255, 0) else (0, 0, 255)
-    | 1 -> if j = 0 then (128, 128, 128) else if j = 1 then (64, 64, 64) else (32, 32, 32)
-    | 2 -> if j = 0 then (10, 10, 10) else if j = 1 then (20, 20, 20) else (30, 30, 30)
-    | _ -> (0, 0, 0) 
-  ) in
+    | 0 -> if j = 0 then { r = 255; g = 0; b = 0 } else if j = 1 then { r = 0; g = 255; b = 0 } else { r = 0; g = 0; b = 255 }
+    | 1 -> if j = 0 then { r = 128; g = 128; b = 128 } else if j = 1 then { r = 64; g = 64; b = 64 } else { r = 32; g = 32; b = 32 }
+    | 2 -> if j = 0 then { r = 10; g = 10; b = 10 } else if j = 1 then { r = 20; g = 20; b = 20 } else { r = 30; g = 30; b = 30 }
+    | _ -> { r = 0; g = 0; b = 0 }
+) in
 
-  let seam = [|1; 1; 1|] in
-  let new_image = Seam_identification.remove_vertical_seam image seam in
-  assert_equal (Array_2d.dimensions new_image) (3, 2) ~msg:"Basic seam removal failed";
-  assert_equal (Array_2d.get ~arr:new_image ~row:0 ~col:1) (Some (0, 0, 255)) ~msg:"Seam removal did not shift correctly";
+let seam = [|1; 1; 1|] in
+let new_image = Seam_identification.remove_vertical_seam image seam in
+assert_equal (Array_2d.dimensions new_image) (3, 2) ~msg:"Basic seam removal failed";
+assert_equal 
+  (Array_2d.get ~arr:new_image ~row:0 ~col:1) 
+  (Some { r = 0; g = 0; b = 255 }) 
+  ~msg:"Seam removal did not shift correctly";
 
-  let seam_edge = [|0; 0; 0|] in
-  let new_image_edge = Seam_identification.remove_vertical_seam image seam_edge in
-  assert_equal (Array_2d.dimensions new_image_edge) (3, 2) ~msg:"Seam removal at edges failed";
-  assert_equal (Array_2d.get ~arr:new_image_edge ~row:0 ~col:0) (Some (0, 255, 0)) ~msg:"Seam removal at left edge failed";
+let seam_edge = [|0; 0; 0|] in
+let new_image_edge = Seam_identification.remove_vertical_seam image seam_edge in
+assert_equal (Array_2d.dimensions new_image_edge) (3, 2) ~msg:"Seam removal at edges failed";
+assert_equal 
+  (Array_2d.get ~arr:new_image_edge ~row:0 ~col:0) 
+  (Some { r = 0; g = 255; b = 0 }) 
+  ~msg:"Seam removal at left edge failed";
 
-  let image_min = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> (1, 1, 1)) in
-  let seam_min = [|0|] in
-  let new_image_min = Seam_identification.remove_vertical_seam image_min seam_min in
-  assert_equal (Array_2d.dimensions new_image_min) (1, 0) ~msg:"Removing seam in minimum size image failed";
+let image_min = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 1; g = 1; b = 1 }) in
+let seam_min = [|0|] in
+let new_image_min = Seam_identification.remove_vertical_seam image_min seam_min in
+assert_equal (Array_2d.dimensions new_image_min) (1, 0) ~msg:"Removing seam in minimum size image failed";
 
-  let seam_invalid = [|2; 3; 4|] in
-  assert_raises (Invalid_argument "Array2d out of bounds") (fun () ->
-    Seam_identification.remove_vertical_seam image seam_invalid) ~msg:"Handling out-of-bounds seam indices failed";
+let seam_invalid = [|2; 3; 4|] in
+assert_raises (Invalid_argument "Array2d out of bounds") (fun () ->
+  Seam_identification.remove_vertical_seam image seam_invalid) ~msg:"Handling out-of-bounds seam indices failed";
 
-  (* Edge case: 1x1 image *)
-  let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> (5, 5, 5)) in
+(* Edge case: 1x1 image *)
+let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 5; g = 5; b = 5 }) in
   let seam_edge_single = [|0|] in
   let new_image_edge_single = Seam_identification.remove_vertical_seam image_edge seam_edge_single in
   assert_equal (Array_2d.dimensions new_image_edge_single) (1, 0) ~msg:"Seam removal from 1x1 image failed"

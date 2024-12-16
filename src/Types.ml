@@ -75,7 +75,11 @@ module Array_2d = struct
     in (top_left, top, top_right) *)
 end
 
-type pixel = int * int * int
+type pixel = {
+  r:int;
+  g:int;
+  b:int
+  }
 
 type image = pixel Array_2d.t
 

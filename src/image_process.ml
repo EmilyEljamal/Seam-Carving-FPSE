@@ -1,15 +1,13 @@
 open Types
 
-let hot_pink = (255, 105, 180)
+let hot_pink = { r = 255; g = 105; b = 180 }
 (* Note: must save width and height and update it accordingly whenever a seam is removed *)
-
 
 module ImageProcess = struct
   let get_dimensions (filename: string): int * int =
     let command = Printf.sprintf "identify -format \"%%w %%h\" %s" filename in
     let ic = Unix.open_process_in command in
     let dimensions = input_line ic in
-    (* ignore (Unix.close_process_in ic); *)
     match String.split_on_char ' ' dimensions with
     | [width; height] -> (int_of_string width, int_of_string height)
     | _ -> failwith "Failed to parse dimensions"
@@ -27,7 +25,8 @@ module ImageProcess = struct
       let r = input_byte ic in
       let g = input_byte ic in
       let b = input_byte ic in
-      (r, g, b) )
+      { r; g; b }
+    )
     in
     close_in ic;
     Sys.remove temp_rgb_file; 
@@ -36,14 +35,13 @@ module ImageProcess = struct
   let load_image (filename : string) : image =
       let width, height = get_dimensions filename in
       let temp_rgb_file = convert_image_to_rgb filename in
-      let pixels = convert_rgb_to_pixels ~temp_rgb_file ~width ~height in
-      pixels
+      convert_rgb_to_pixels ~temp_rgb_file ~width ~height
     
   let save_pixels_as_image ~pixels ~width ~height ~output_filename =
     let temp_rgb_file = Filename.temp_file "screenshot" ".rgb" in
     let oc = open_out_bin temp_rgb_file in
     Array.iter (fun row ->
-      Array.iter (fun (r, g, b) ->
+      Array.iter (fun { r; g; b } ->
         output_byte oc r;
         output_byte oc g;
         output_byte oc b
@@ -57,47 +55,42 @@ module ImageProcess = struct
     if Sys.command command <> 0 then
       failwith "Failed to save screenshot";
     Sys.remove temp_rgb_file
-  
 
-    let fst3 (r, _, _) = r
-    let snd3 (_, g, _) = g
-    let trd3 (_, _, b) = b
-
-    let calculate_energy_map (mask : (int * int) list option) (img : image) : energy_map =
-      let rows, cols = Array_2d.dimensions img in
+  let calculate_energy_map (mask : (int * int) list option) (img : image) : energy_map =
+    let rows, cols = Array_2d.dimensions img in
   
-      let is_in_mask x y =
-        match mask with
-        | None -> false
-        | Some mask_list -> List.exists (fun (mx, my) -> mx = x && my = y) mask_list
-      in
+    let is_in_mask x y =
+      match mask with
+      | None -> false
+      | Some mask_list -> List.exists (fun (mx, my) -> mx = x && my = y) mask_list
+    in
     
-      Array_2d.init ~rows ~cols (fun x y ->
-        if is_in_mask x y then
-          Float.neg_infinity
-        else
-          let get_neighbor offset_x offset_y =
-            Array_2d.get ~arr:img ~row:(x + offset_x) ~col:(y + offset_y)
-            |> Option.value ~default:(0, 0, 0)  
-          in
+    Array_2d.init ~rows ~cols (fun x y ->
+      if is_in_mask x y then
+        Float.neg_infinity
+      else
+        let get_neighbor offset_x offset_y =
+          Array_2d.get ~arr:img ~row:(x + offset_x) ~col:(y + offset_y)
+          |> Option.value ~default:{ r = 0; g = 0; b = 0 }
+        in
     
-          let left = get_neighbor 0 (-1) in
-          let right = get_neighbor 0 1 in
-          let up = get_neighbor (-1) 0 in
-          let down = get_neighbor 1 0 in
+        let left = get_neighbor 0 (-1) in
+        let right = get_neighbor 0 1 in
+        let up = get_neighbor (-1) 0 in
+        let down = get_neighbor 1 0 in
     
-          let dx_r = fst3 right - fst3 left in
-          let dx_g = snd3 right - snd3 left in
-          let dx_b = trd3 right - trd3 left in
-          let dx2 = (dx_r * dx_r) + (dx_g * dx_g) + (dx_b * dx_b) in
+        let dx_r = right.r - left.r in
+        let dx_g = right.g - left.g in
+        let dx_b = right.b - left.b in
+        let dx2 = (dx_r * dx_r) + (dx_g * dx_g) + (dx_b * dx_b) in
+
+        let dy_r = down.r - up.r in
+        let dy_g = down.g - up.g in
+        let dy_b = down.b - up.b in
+        let dy2 = (dy_r * dy_r) + (dy_g * dy_g) + (dy_b * dy_b) in
     
-          let dy_r = fst3 down - fst3 up in
-          let dy_g = snd3 down - snd3 up in
-          let dy_b = trd3 down - trd3 up in
-          let dy2 = (dy_r * dy_r) + (dy_g * dy_g) + (dy_b * dy_b) in
-    
-          Float.of_int (dx2 + dy2)
-      )
+        Float.of_int (dx2 + dy2)
+    )
 
     let draw_seam (img : image) (seam : int array) : image =
       let height, width = Array_2d.dimensions img in
@@ -145,21 +138,26 @@ module ImageProcess = struct
       let rows, cols = Array_2d.dimensions img in
       let output = Array_2d.init ~rows ~cols:(cols + 1) (fun row col ->
         if col <= seam_idx.(row) then
-          Array_2d.get ~arr:img ~row ~col |> Option.value ~default:(0,0,0)
+          Array_2d.get ~arr:img ~row ~col |> Option.value ~default:{ r = 0; g = 0; b = 0 }
         else if col = seam_idx.(row) + 1 then
-          let left = Array_2d.get ~arr:img ~row ~col:(col - 1) |> Option.value ~default:(0,0,0) in
-          let right = Array_2d.get ~arr:img ~row ~col:seam_idx.(row) |> Option.value ~default:(0,0,0) in
-          let r = (fst3 left + fst3 right) / 2 in
-          let g = (snd3 left + snd3 right) / 2 in
-          let b = (trd3 left + trd3 right) / 2 in
-          (r, g, b)
+          let left = Array_2d.get ~arr:img ~row ~col:(col - 1) |> Option.value ~default:{ r = 0; g = 0; b = 0 } in
+          let right = Array_2d.get ~arr:img ~row ~col:seam_idx.(row) |> Option.value ~default:{ r = 0; g = 0; b = 0 } in
+          { r = (left.r + right.r) / 2; g = (left.g + right.g) / 2; b = (left.b + right.b) / 2 }
         else
-          Array_2d.get ~arr:img ~row ~col:(col - 1) |> Option.value ~default:(0,0,0)
+          Array_2d.get ~arr:img ~row ~col:(col - 1) |> Option.value ~default:{ r = 0; g = 0; b = 0 }
       )
       in
       output
-    
-    
+     (* let rec add_seams (img: image) (width: int) (new_width: int) : image list =
+      if (width = new_width) then []
+      else 
+        let energy = calculate_energy_map None img in
+        let min_map = Seam_identification.calc_minimal_energy_to_bottom energy in
+        let seam = Seam_identification.find_vertical_seam min_map in
+        let drawn_img = draw_seam img seam in
+        let img_with_seam = add_seam img seam in
+        drawn_img :: img_with_seam :: (add_seams img_with_seam width (new_width + 1)) *)
+
     let rec remove_object (img: image) (mask: (int * int) list) (seams: int array list) : (int array list * image list) =
       if List.is_empty mask then (seams, [])
       else
@@ -180,22 +178,14 @@ module ImageProcess = struct
         
         let (new_seams, images) = remove_object img_without_seam updated_mask (seam :: seams) in 
         (new_seams, img_with_seam :: img_without_seam :: images)
-
-    (* let rec add_seams (img: image) (width: int) (new_width: int) : image list =
-      if (width = new_width) then []
-      else 
-        let energy = calculate_energy_map None img in
-        let min_map = Seam_identification.calc_minimal_energy_to_bottom energy in
-        let seam = Seam_identification.find_vertical_seam min_map in
+    
+    let rec add_stored_seams (img: image) (seams: int array list) : image list = 
+      match seams with 
+      | [] -> []
+      | seam :: rest -> 
         let drawn_img = draw_seam img seam in
-        let img_with_seam = add_seam img seam in
-        drawn_img :: img_with_seam :: (add_seams img_with_seam width (new_width + 1)) *)
-          
-        let rec add_stored_seams (img: image) (seams: int array list) : image list = 
-          match seams with 
-          | [] -> []
-          | seam :: rest -> 
-            let drawn_img = draw_seam img seam in
-            let img_with_seam = add_seam img seam in 
-            drawn_img :: img_with_seam :: (add_stored_seams img_with_seam rest)
+        let img_with_seam = add_seam img seam in 
+        drawn_img :: img_with_seam :: (add_stored_seams img_with_seam rest)
+    
+  
 end
