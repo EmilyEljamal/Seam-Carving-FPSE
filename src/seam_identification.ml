@@ -32,19 +32,18 @@ let calc_minimal_energy_to_bottom (energy_map : energy_map) : Minimal_energy_map
   done;
   minimal_energy_map
 
-    
-    let find_vertical_seam (minimal_energy_map : Minimal_energy_map.t) : int array =
-      let rows, _ = Array_2d.dimensions minimal_energy_map in
-      let start_col = Minimal_energy_map.get_minimal_energy minimal_energy_map 0 in
-      let rec trace_seam row col seam =
-        if row >= rows then seam 
-        else 
-          let direction = Pair.get_direction (Array_2d.get ~arr:minimal_energy_map ~row ~col 
-          |> Option.value ~default:(Pair.create ~in_energy:0.0 ~in_direction:0)) in 
-          let next_col = col + direction in 
-          trace_seam (row + 1) next_col (col :: seam)
-      in
-      Array.of_list (List.rev (trace_seam 0 start_col []))
+  let find_vertical_seam (minimal_energy_map : Minimal_energy_map.t) : int array =
+    let rows, _ = Array_2d.dimensions minimal_energy_map in
+    let start_col = Minimal_energy_map.get_minimal_energy minimal_energy_map 0 in
+    let rec trace_seam row col seam =
+      if row >= rows then seam 
+      else 
+        let direction = Pair.get_direction (Array_2d.get ~arr:minimal_energy_map ~row ~col 
+        |> Option.value ~default:(Pair.create ~in_energy:0.0 ~in_direction:0)) in 
+        let next_col = col + direction in 
+        trace_seam (row + 1) next_col (col :: seam)
+    in
+    Array.of_list (List.rev (trace_seam 0 start_col []))
 
   let remove_vertical_seam (_image: image) (_seam: int array) : image =
     let height, width = Array_2d.dimensions _image in

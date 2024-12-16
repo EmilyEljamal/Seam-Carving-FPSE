@@ -26,11 +26,3 @@ let () =
       ) (* Temporary unit placeholder *)
 | _ ->
   Printf.printf "No image path provided" 
-
-(*
-  load image
-  calculate energy map
-  calculate minimal energy to the bottom
-  get vertical seam
-  remove seam
-*)

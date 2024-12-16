@@ -41,6 +41,7 @@ module Array_2d = struct
       [
        g 0 (-1); g 0 1; g (-1) 0; g 1 (0);
       ]
+
   let bottom_neighbors ~arr ~row ~col : 'a list =
     let g xo yo = get ~arr ~row:(row + xo) ~col:(col + yo) in
     List.filter_map ~f:Fn.id
@@ -49,8 +50,7 @@ module Array_2d = struct
         g 1 0;     (* S  *)
         g 1 1;     (* SE *)
       ]
-      
-
+    
   let map (f : int -> int -> 'a -> 'b) (arr : 'a t) : 'b t =
     Array.mapi arr ~f:(fun y r -> Array.mapi r ~f:(f y))
 
@@ -67,12 +67,6 @@ module Array_2d = struct
             arr.(row).(col)
         )
   )
-
-    (* let get_top_neighbors ~arr ~row ~col : ('a option * 'a option * 'a option) = 
-      let top_left = if col > 0 then get ~arr ~row:(row - 1) ~col:(col - 1) else None in 
-      let top = get ~arr ~row:(row - 1) ~col in 
-      let top_right = if col < Array.length arr.(0) - 1 then get ~arr ~row:(row - 1) ~col:(col + 1) else None 
-    in (top_left, top, top_right) *)
 end
 
 type pixel = int * int * int
@@ -84,16 +78,15 @@ type energy_map = float Array_2d.t
 module Minimal_energy_map = struct
   type t = Pair.t Array_2d.t
 
+
   let from_energy_map (_energy_map : energy_map) : t =
-    Array_2d.map (fun row col energy -> Pair.create ~in_energy:energy ~in_direction:0) _energy_map
-    (* let from_energy_map (_energy_map : energy_map) : t =
       let rows = Array.length _energy_map in
         Array_2d.map (fun row col energy ->
           if row = rows - 1 then
             Pair.create ~in_energy:energy ~in_direction:0
           else
             Pair.create ~in_energy:0.0 ~in_direction:0
-        ) _energy_map *)
+        ) _energy_map
 
   let get_minimal_energy (_map : t) (_row : int) : int =
     match Array_2d.get_row _map _row with
@@ -114,14 +107,6 @@ module Minimal_energy_map = struct
   let to_energy_map (_map : t) : energy_map =
     Array_2d.map (fun row col pair -> Pair.get_energy pair) _map
 
-
-    (* let iteri_bottom_to_top (arr : t) ~(f : row:int -> col:int -> Pair.t -> unit) : t =
-      let len = Array.length arr in
-      for i = 0 to len - 1 do
-        let row = len - i in
-        Array.iteri ~f:(fun col elem -> f ~row ~col elem ) arr.(row)
-      done;;   *)
-  (* Avoiding Mutation - reverse in place *)
   let iteri_bottom_to_top (arr : t) ~(f : int -> int -> Pair.t -> Pair.t) : t =
     let rows = Array.length arr in
     let cols = if rows > 0 then Array.length arr.(0) else 0 in
@@ -130,7 +115,6 @@ module Minimal_energy_map = struct
       Array.init cols ~f:(fun col ->
         f original_row col arr.(original_row).(col)
       )
-    )
-  
+    ) 
 end
 
