@@ -41,7 +41,7 @@ module Array_2d = struct
       [
        g 0 (-1); g 0 1; g (-1) 0; g 1 (0);
       ]
-  let bottom_neighbors ~arr ~row ~col : 'a list =
+  (* let bottom_neighbors ~arr ~row ~col : 'a list =
     let g xo yo = get ~arr ~row:(row + xo) ~col:(col + yo) in
     List.filter_map ~f:Fn.id
       [
@@ -49,7 +49,7 @@ module Array_2d = struct
         g 1 0;     (* S  *)
         g 1 1;     (* SE *)
       ]
-      
+       *)
 
   let map (f : int -> int -> 'a -> 'b) (arr : 'a t) : 'b t =
     Array.mapi arr ~f:(fun y r -> Array.mapi r ~f:(f y))
@@ -68,18 +68,23 @@ module Array_2d = struct
         )
   )
 
-    (* let get_top_neighbors ~arr ~row ~col : ('a option * 'a option * 'a option) = 
-      let top_left = if col > 0 then get ~arr ~row:(row - 1) ~col:(col - 1) else None in 
-      let top = get ~arr ~row:(row - 1) ~col in 
-      let top_right = if col < Array.length arr.(0) - 1 then get ~arr ~row:(row - 1) ~col:(col + 1) else None 
-    in (top_left, top, top_right) *)
+  let top_neighbors ~arr ~row ~col : 'a list =
+    let g dx dy = get ~arr ~row:(row + dx) ~col:(col + dy) in
+    List.filter_map ~f:Fun.id
+      [
+        g (-1) (-1);  (* NW: Top-left neighbor *)
+        g (-1) 0;     (* N: Top neighbor *)
+        g (-1) 1;     (* NE: Top-right neighbor *)
+      ]
+  
+  
+  
 end
 
 type pixel = {
   r:int;
   g:int;
-  b:int
-  }
+  b:int }
 
 type image = pixel Array_2d.t
 
@@ -129,12 +134,13 @@ module Minimal_energy_map = struct
   let iteri_bottom_to_top (arr : t) ~(f : int -> int -> Pair.t -> Pair.t) : t =
     let rows = Array.length arr in
     let cols = if rows > 0 then Array.length arr.(0) else 0 in
-    Array.init rows ~f:(fun reversed_row ->
-      let original_row = rows - 1 - reversed_row in
+    Array.init rows ~f:(fun row ->
       Array.init cols ~f:(fun col ->
+        let original_row = rows - 1 - row in
         f original_row col arr.(original_row).(col)
       )
     )
+  
   
 end
 

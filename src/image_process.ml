@@ -94,32 +94,12 @@ module ImageProcess = struct
 
     let draw_seam (img : image) (seam : int array) : image =
       let height, width = Array_2d.dimensions img in
-
-      (* Debug output for dimensions *)
       Printf.printf "Dimensions during drawing seam: height = %d, width = %d\n" height width;
-    
-      (* Ensure the seam length matches the image height *)
       if Array.length seam <> height then
         failwith (Printf.sprintf "Seam length mismatch: expected %d, got %d" height (Array.length seam));
-    
-      (* Draw the seam *)
       Array_2d.mapi (fun row col pixel ->
         if col = seam.(row) then hot_pink else pixel
       ) img
-
-      (* let print_minimal_energy_map (minimal_energy_map : Minimal_energy_map.t) : unit =
-        let height, width = Array_2d.dimensions minimal_energy_map in
-        for row = 0 to height - 1 do
-          for col = 0 to width - 1 do
-            match Array_2d.get ~arr:minimal_energy_map ~row ~col with
-            | Some pair -> 
-                let energy = Pair.get_energy pair in
-                let direction = Pair.get_direction pair in
-                Printf.printf "Energy at (%d, %d): %f, Direction: %d\n" row col energy direction
-            | None -> 
-                Printf.printf "Energy at (%d, %d) is out of bounds\n" row col
-          done;
-        done *)
 
         
     let rec remove_seams (img: image) (num_seams: int) : image list =
@@ -148,15 +128,6 @@ module ImageProcess = struct
       )
       in
       output
-     (* let rec add_seams (img: image) (width: int) (new_width: int) : image list =
-      if (width = new_width) then []
-      else 
-        let energy = calculate_energy_map None img in
-        let min_map = Seam_identification.calc_minimal_energy_to_bottom energy in
-        let seam = Seam_identification.find_vertical_seam min_map in
-        let drawn_img = draw_seam img seam in
-        let img_with_seam = add_seam img seam in
-        drawn_img :: img_with_seam :: (add_seams img_with_seam width (new_width + 1)) *)
 
     let rec remove_object (img: image) (mask: (int * int) list) (seams: int array list) : (int array list * image list) =
       if List.is_empty mask then (seams, [])
@@ -164,7 +135,6 @@ module ImageProcess = struct
         let energy_map = calculate_energy_map (Some mask) img in
         let minimal_energy = Seam_identification.calc_minimal_energy_to_bottom energy_map in
         Printf.printf "One pass removing seam:\n";
-        (* Visualize the minimal energy map if needed *)
         (* print_minimal_energy_map minimal_energy; *)
         
         let seam = Seam_identification.find_vertical_seam minimal_energy in
@@ -189,3 +159,27 @@ module ImageProcess = struct
     
   
 end
+
+(* let rec add_seams (img: image) (width: int) (new_width: int) : image list =
+      if (width = new_width) then []
+      else 
+        let energy = calculate_energy_map None img in
+        let min_map = Seam_identification.calc_minimal_energy_to_bottom energy in
+        let seam = Seam_identification.find_vertical_seam min_map in
+        let drawn_img = draw_seam img seam in
+        let img_with_seam = add_seam img seam in
+        drawn_img :: img_with_seam :: (add_seams img_with_seam width (new_width + 1)) *)
+
+(* let print_minimal_energy_map (minimal_energy_map : Minimal_energy_map.t) : unit =
+        let height, width = Array_2d.dimensions minimal_energy_map in
+        for row = 0 to height - 1 do
+          for col = 0 to width - 1 do
+            match Array_2d.get ~arr:minimal_energy_map ~row ~col with
+            | Some pair -> 
+                let energy = Pair.get_energy pair in
+                let direction = Pair.get_direction pair in
+                Printf.printf "Energy at (%d, %d): %f, Direction: %d\n" row col energy direction
+            | None -> 
+                Printf.printf "Energy at (%d, %d) is out of bounds\n" row col
+          done;
+        done *)
