@@ -7,6 +7,7 @@ Date: 11/13/2024
 Github Link: https://github.com/EmilyEljamal/Seam-Carving-FPSE 
 
 # Seam Carving to Resize Images
+Example: https://github.com/vivianhylee/seam-carving
 
 # Project Overview
 
@@ -46,22 +47,22 @@ Using the prev grid, calculate from top to bottom, the path of least importance 
 ## Implementation Plan
 
 - [ ] **11/22: Types + Image Life Cycle**
-  - [ ] Finalize Types
-  - [ ] Implement `Image_Process.ml` (not including `calculate_energy_map`)
-  - [ ] Set up `main.ml` for command-line interface
-  - [ ] Test loading image, trivial pixel removal, and output
+  - [X ] Finalize Types
+  - [X ] Implement `Image_Process.ml` (not including `calculate_energy_map`)
+  - [X ] Set up `main.ml` for command-line interface
+  - [ X] Test loading image, trivial pixel removal, and output
 
 - [ ] **11/29: First Algorithm**
-  - [ ] Implement `calculate_energy_map`
-  - [ ] Test and visualize energy map
+  - [X ] Implement `calculate_energy_map`
+  - [X ] Test and visualize energy map
 
 - [ ] **12/6: Second Algorithm**
-  - [ ] Implement `Seam_identification.ml`
-  - [ ] Test and visualize seam identification output
-  - [ ] Test creating GIF from pixel removal snapshots
+  - [X ] Implement `Seam_identification.ml`
+  - [X ] Test and visualize seam identification output
+  - [X ] Test creating GIF from pixel removal snapshots
 
 - [ ] **12/13: Testing**
-  - [ ] Comprehensive testing and refinement of all modules
+  - [X ] Comprehensive testing and refinement of all modules
 
 # Note about Project Complexity
 https://pages.cs.wisc.edu/~moayad/cs766/index.html

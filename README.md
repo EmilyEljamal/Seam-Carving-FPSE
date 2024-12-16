@@ -1,5 +1,8 @@
 # Seam-Carving-FPSE
 
+# Seam Carving to Resize Images
+Example: https://github.com/vivianhylee/seam-carving
+
 The purpose of this project is to develop an intelligent image transformation tool that uses seam carving to resize images while preserving critical visual elements. Regular resizing tools tend to distort or lose important parts of an image whereas seam carving uses vertical and horizontal seams (paths of low importance pixels) that are either removed or inserted to maintain the integrity of key features. This makes it ideal for resizing images with complex details where certain areas should remain untouched despite a change in dimensions.
 
 We will develop a seam carving algorithm in OCaml that will apply functional programming concepts. OCaml’s Core library will support functional abstractions and efficient data manipulation while ImageMagick will be used to handle the storage of images and handle the output of the final image product. 
