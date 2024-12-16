@@ -62,6 +62,8 @@ sig
     - [arr]: The input 2D array.
     - Returns: A new 2D array with the results of applying [f] to each element.
     *)
+
+    val copy : 'a t -> 'a t
 end
 
 type pixel = int * int * int 
@@ -102,3 +104,5 @@ sig
         - [map]: The minimal energy map.
         - [f]: A function receiving ~row, ~col, and the [Pair.t] at that position. *)
 end
+
+  

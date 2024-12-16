@@ -59,6 +59,15 @@ module Array_2d = struct
       Array.mapi ~f:(fun col value -> f row col value) row_array
     ) arr
 
+  let copy (arr: 'a t) : 'a t =
+    let rows = Array.length arr in
+    let cols = if rows > 0 then Array.length arr.(0) else 0 in
+    Array.init rows ~f:(fun row ->
+        Array.init cols ~f:(fun col ->
+            arr.(row).(col)
+        )
+  )
+
     (* let get_top_neighbors ~arr ~row ~col : ('a option * 'a option * 'a option) = 
       let top_left = if col > 0 then get ~arr ~row:(row - 1) ~col:(col - 1) else None in 
       let top = get ~arr ~row:(row - 1) ~col in 
@@ -75,16 +84,16 @@ type energy_map = float Array_2d.t
 module Minimal_energy_map = struct
   type t = Pair.t Array_2d.t
 
-  (* let from_energy_map (_energy_map : energy_map) : t =
-    Array_2d.map (fun row col energy -> Pair.create ~in_energy:energy ~in_direction:0) _energy_map *)
-    let from_energy_map (_energy_map : energy_map) : t =
+  let from_energy_map (_energy_map : energy_map) : t =
+    Array_2d.map (fun row col energy -> Pair.create ~in_energy:energy ~in_direction:0) _energy_map
+    (* let from_energy_map (_energy_map : energy_map) : t =
       let rows = Array.length _energy_map in
         Array_2d.map (fun row col energy ->
           if row = rows - 1 then
             Pair.create ~in_energy:energy ~in_direction:0
           else
             Pair.create ~in_energy:0.0 ~in_direction:0
-        ) _energy_map
+        ) _energy_map *)
 
   let get_minimal_energy (_map : t) (_row : int) : int =
     match Array_2d.get_row _map _row with
@@ -124,3 +133,4 @@ module Minimal_energy_map = struct
     )
   
 end
+

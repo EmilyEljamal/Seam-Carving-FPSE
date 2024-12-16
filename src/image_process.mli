@@ -29,12 +29,20 @@ module ImageProcess : sig
   (** [trd3 (_, _, b)] retrieves the third component of an RGB tuple. *)
   val trd3 : pixel -> int
 
-  (** [calculate_energy_map img] calculates the energy map of an image using gradient magnitude. *)
-  val calculate_energy_map : image -> energy_map
+  (** [calculate_energy_map mask img] calculates the energy map of an image using gradient magnitude. *)
+  val calculate_energy_map : (int * int) list option -> image -> energy_map
 
   (** [draw_seam img seam] highlights a seam in the image by drawing it in a specified color. *)
   val draw_seam : image -> int array -> image
 
   (** [remove_seam img seam width] removes a seam from the image, reducing its width by 1. *)
   val remove_seams : image -> int -> image list
+
+  val add_seam : image -> int array -> image 
+
+  val remove_object : image -> (int * int) list -> int array list -> int array list * image list
+
+  val add_stored_seams : image -> int array list -> image list
+
+  (* val add_seams : image -> int -> int -> image list *)
 end
