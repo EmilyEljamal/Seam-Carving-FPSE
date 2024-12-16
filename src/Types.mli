@@ -45,16 +45,19 @@ sig
         - Returns: A list of adjacent elements. *)
 
         
-val top_neighbors : arr:'a t -> row:int -> col:int -> 'a list
-(** [top_neighbors ~arr ~row ~col] returns a list of the three top neighbors of the cell at position [(row, col)] in [arr].
-    The top neighbors are the cells directly above and diagonally above to the left and right:
-    - NW (row-1, col-1)
-    - N  (row-1, col)
-    - NE (row-1, col+1)
+    val bottom_neighbors : arr:'a t -> row:int -> col:int -> (int * 'a) list
+    (** [bottom_neighbors ~arr ~row ~col] retrieves the bottom neighbors of the
+        element at position [(row, col)] in [arr]. Each neighbor is returned as a
+        tuple [(direction, value)], where:
+        - [-1] represents the bottom-left neighbor (SW),
+        - [0] represents the bottom neighbor (S),
+        - [1] represents the bottom-right neighbor (SE).
+        Neighbors that are out of bounds are excluded. *)
 
-    If a neighbor is out of bounds, it is excluded from the list.
-*)
-        
+    val set : arr:'a t -> row:int -> col:int -> 'a -> unit
+    (** [set ~arr ~row ~col value] updates the value at position [(row, col)] in the
+        2D array to [value]. Raises [Invalid_argument] if the position is out of bounds. *)
+
     val map : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
     (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
 

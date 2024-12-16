@@ -3,7 +3,6 @@ open Core
 open Types
 
 
-(* Test for Pair module *)
 let test_pair _ =
   let pair = Pair.create ~in_energy:10.5 ~in_direction:1 in
   assert_equal (Pair.get_energy pair) 10.5 ~msg:"Energy retrieval failed";
@@ -12,7 +11,6 @@ let test_pair _ =
   assert_equal (Pair.get_energy updated_pair) 15.0 ~msg:"Energy update failed";
   assert_equal (Pair.get_direction updated_pair) 1 ~msg:"Direction should remain the same"
 
-(* Test for Array_2d module *)
 let test_array_2d _ =
   let arr = Array_2d.init ~rows:3 ~cols:3 (fun row col -> row + col) in
   let expected_row = Some [| 2; 3; 4; |] in
@@ -25,7 +23,6 @@ let test_array_2d _ =
   let adj = Array_2d.adjacents ~arr ~row:1 ~col:1 in
   assert_equal adj [1; 3; 1; 3] ~msg:"Adjacents calculation failed"
 
-(* Test for Minimal_energy_map module *)
 let test_minimal_energy_map _ =
   let energy_map = Array_2d.init ~rows:3 ~cols:3 (fun _ _ -> 5.0) in
   let min_energy_map = Minimal_energy_map.from_energy_map energy_map in
@@ -82,10 +79,7 @@ let test_find_vertical_seam _ =
   let seam_edge = Seam_identification.find_vertical_seam minimal_energy_map_edge in
   assert_equal seam_edge [|0|] ~msg:"1x1 image seam failed"
 
-  (* Test for remove_vertical_seam function *)
-(* Test for remove_vertical_seam function *)
-(* Test for remove_vertical_seam function with image as pixel array array *)
-(* Test for remove_vertical_seam function with image as pixel array array *)
+
 let test_remove_vertical_seam _ =
   let image = Array_2d.init ~rows:3 ~cols:3 (fun i j ->
     match i with
@@ -126,10 +120,7 @@ let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 5; g = 5; b = 5
   let new_image_edge_single = Seam_identification.remove_vertical_seam image_edge seam_edge_single in
   assert_equal (Array_2d.dimensions new_image_edge_single) (1, 0) ~msg:"Seam removal from 1x1 image failed"
 
-  open OUnit2
-
   let test_calc_minimal_energy_to_bottom _ =
-    (* Step 1: Create a small test energy map *)
     let energy_map = Array_2d.init ~rows:3 ~cols:3 (fun row col ->
       match (row, col) with
       | (0, 0) -> 10.0
@@ -144,30 +135,8 @@ let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 5; g = 5; b = 5
       | _ -> failwith "Out of bounds"
     ) in
   
-    (* Step 2: Calculate the minimal energy map *)
     let minimal_energy_map = Seam_identification.calc_minimal_energy_to_bottom energy_map in
   
-    (* Debugging function to print the minimal energy map *)
-    let print_minimal_energy_map map =
-      let rows, cols = Array_2d.dimensions map in
-      for row = 0 to rows - 1 do
-        for col = 0 to cols - 1 do
-          let pair = Array_2d.get ~arr:map ~row ~col in
-          match pair with
-          | Some p ->
-            Printf.printf "Row: %d, Col: %d, Energy: %.2f, Direction: %d\n"
-              row col (Pair.get_energy p) (Pair.get_direction p)
-          | None -> Printf.printf "Row: %d, Col: %d, No value\n" row col
-        done;
-      done;
-      Printf.printf "\n"
-    in
-  
-    (* Print the computed minimal energy map *)
-    Printf.printf "Minimal Energy Map:\n";
-    print_minimal_energy_map minimal_energy_map;
-  
-    (* Helper function to safely get values from Array_2d *)
     let get_pair arr row col =
       match Array_2d.get ~arr ~row ~col with
       | Some value -> value
@@ -192,7 +161,6 @@ let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 5; g = 5; b = 5
   
     (* Debugging complete map to ensure all values match *)
     Printf.printf "Debugging completed, assertions passed.\n"
-  
 
 (* Test suite *)
 let suite =
@@ -202,7 +170,7 @@ let suite =
     "Test Minimal_energy_map module" >:: test_minimal_energy_map;
     "Test Vertical Seam" >:: test_find_vertical_seam;
     "Test Remove Seam" >:: test_remove_vertical_seam;
-      "test_calc_minimal_energy_to_bottom" >:: test_calc_minimal_energy_to_bottom;
+      "test_calc_minimal_energy_to_bottom" >:: test_calc_minimal_energy_to_bottom
   ]
 
 let () =
