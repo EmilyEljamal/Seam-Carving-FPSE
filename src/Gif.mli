@@ -6,12 +6,6 @@ module Gif : sig
         - [path]: The output path for GIF file to be saved.
         - [delay]: The delay between frames in milliseconds. *)
 
-    val process_frames : 'a list -> 'a list
-    (** [process_frames frames] processes a list of frames by performing any necessary transformations
-        or optimizations to prepare them for the GIF sequence.
-        - [frames]: A list of frames to process.
-        - Returns: The list of processed frames. *)
-
     val add_frame : image -> int -> unit
     (** [add_frame frame] adds a single frame to the GIF sequence.
         - [frame]: The frame to add to the sequence. *)

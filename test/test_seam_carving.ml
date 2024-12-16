@@ -41,13 +41,93 @@ let test_minimal_energy_map _ =
   assert_raises (Failure "Invalid row index") (fun () ->
     Minimal_energy_map.update_direction min_energy_map 4 4 10
   ) ~msg:"Invalid row index failed for update direction"
-  
+
+let test_find_vertical_seam _ =
+  let minimal_energy_map = Minimal_energy_map.from_energy_map [|
+    [|10.0; 20.0; 30.0|];
+    [|15.0; 5.0; 25.0|];
+    [|40.0; 10.0; 5.0|];
+  |] in
+  let seam = Seam_identification.find_vertical_seam minimal_energy_map in
+  assert_equal seam [|1; 1; 1|] ~msg:"Basic seam finding failed";
+
+  let minimal_energy_map2 = Minimal_energy_map.from_energy_map [|
+    [|10.0; 20.0; 30.0; 40.0|];
+    [|15.0; 5.0; 25.0; 35.0|];
+    [|40.0; 10.0; 5.0; 25.0|];
+  |] in
+  let seam2 = Seam_identification.find_vertical_seam minimal_energy_map2 in
+  assert_equal seam2 [|1; 1; 1|] ~msg:"Handling non-trivial seam failed";
+
+  let minimal_energy_map3 = Minimal_energy_map.from_energy_map [|
+    [|1.0; 1.0; 1.0|];
+    [|1.0; 1.0; 1.0|];
+  |] in
+  let seam3 = Seam_identification.find_vertical_seam minimal_energy_map3 in
+  assert_equal seam3 [|0; 0|] ~msg:"Handling edge cases seam failed";
+
+  let minimal_energy_map4 = Minimal_energy_map.from_energy_map [|
+    [|100.0; 200.0; 300.0; 400.0; 500.0|];
+    [|150.0; 50.0; 250.0; 350.0; 450.0|];
+    [|200.0; 100.0; 50.0; 150.0; 250.0|];
+    [|400.0; 300.0; 200.0; 100.0; 50.0|];
+  |] in
+  let seam4 = Seam_identification.find_vertical_seam minimal_energy_map4 in
+  assert_equal seam4 [|1; 1; 1; 1|] ~msg:"Large image seam failed";
+
+  assert_raises (Failure "Invalid row index") (fun () ->
+    Seam_identification.find_vertical_seam minimal_energy_map3) ~msg:"Invalid row index failed";
+
+  let minimal_energy_map_edge = Minimal_energy_map.from_energy_map [|[|5.0|]|] in 
+  let seam_edge = Seam_identification.find_vertical_seam minimal_energy_map_edge in
+  assert_equal seam_edge [|0|] ~msg:"1x1 image seam failed"
+
+  (* Test for remove_vertical_seam function *)
+(* Test for remove_vertical_seam function *)
+(* Test for remove_vertical_seam function with image as pixel array array *)
+(* Test for remove_vertical_seam function with image as pixel array array *)
+let test_remove_vertical_seam _ =
+  let image = Array_2d.init ~rows:3 ~cols:3 (fun i j ->
+    match i with
+    | 0 -> if j = 0 then (255, 0, 0) else if j = 1 then (0, 255, 0) else (0, 0, 255)
+    | 1 -> if j = 0 then (128, 128, 128) else if j = 1 then (64, 64, 64) else (32, 32, 32)
+    | 2 -> if j = 0 then (10, 10, 10) else if j = 1 then (20, 20, 20) else (30, 30, 30)
+    | _ -> (0, 0, 0) 
+  ) in
+
+  let seam = [|1; 1; 1|] in
+  let new_image = Seam_identification.remove_vertical_seam image seam in
+  assert_equal (Array_2d.dimensions new_image) (3, 2) ~msg:"Basic seam removal failed";
+  assert_equal (Array_2d.get ~arr:new_image ~row:0 ~col:1) (Some (0, 0, 255)) ~msg:"Seam removal did not shift correctly";
+
+  let seam_edge = [|0; 0; 0|] in
+  let new_image_edge = Seam_identification.remove_vertical_seam image seam_edge in
+  assert_equal (Array_2d.dimensions new_image_edge) (3, 2) ~msg:"Seam removal at edges failed";
+  assert_equal (Array_2d.get ~arr:new_image_edge ~row:0 ~col:0) (Some (0, 255, 0)) ~msg:"Seam removal at left edge failed";
+
+  let image_min = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> (1, 1, 1)) in
+  let seam_min = [|0|] in
+  let new_image_min = Seam_identification.remove_vertical_seam image_min seam_min in
+  assert_equal (Array_2d.dimensions new_image_min) (1, 0) ~msg:"Removing seam in minimum size image failed";
+
+  let seam_invalid = [|2; 3; 4|] in
+  assert_raises (Invalid_argument "Array2d out of bounds") (fun () ->
+    Seam_identification.remove_vertical_seam image seam_invalid) ~msg:"Handling out-of-bounds seam indices failed";
+
+  (* Edge case: 1x1 image *)
+  let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> (5, 5, 5)) in
+  let seam_edge_single = [|0|] in
+  let new_image_edge_single = Seam_identification.remove_vertical_seam image_edge seam_edge_single in
+  assert_equal (Array_2d.dimensions new_image_edge_single) (1, 0) ~msg:"Seam removal from 1x1 image failed"
+
 (* Test suite *)
 let suite =
   "All Tests" >::: [
     "Test Pair module" >:: test_pair;
     "Test Array_2d module" >:: test_array_2d;
     "Test Minimal_energy_map module" >:: test_minimal_energy_map;
+    "Test Vertical Seam" >:: test_find_vertical_seam;
+    "Test Remove Seam" >:: test_remove_vertical_seam;
   ]
 
 let () =
