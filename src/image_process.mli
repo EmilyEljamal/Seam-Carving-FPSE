@@ -21,7 +21,7 @@ module ImageProcess : sig
     pixels:image -> width:int -> height:int -> output_filename:string -> unit
 
   (** [calculate_energy_map mask img] calculates the energy map of an image using gradient magnitude. *)
-  val calculate_energy_map : (int * int) list option -> image -> energy_map
+  val calculate_energy_map : object_removal:bool -> (int * int) list option -> image -> energy_map
 
   (** [draw_seam img seam] highlights a seam in the image by drawing it in a specified color. *)
   val draw_seam : image -> int array -> image
@@ -35,5 +35,5 @@ module ImageProcess : sig
 
   val add_stored_seams : image -> int array list -> image list
 
-  (* val add_seams : image -> int -> int -> image list *)
+  val add_seams : image -> int -> int -> image list 
 end
