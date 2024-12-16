@@ -66,7 +66,11 @@ sig
     val copy : 'a t -> 'a t
 end
 
-type pixel = int * int * int 
+type pixel = {
+  r:int;
+  g:int;
+  b:int
+  }
 (** Type alias for an pixel representation as a tuple of ints. *)
 
 type image = pixel Array_2d.t

@@ -20,15 +20,6 @@ module ImageProcess : sig
   val save_pixels_as_image : 
     pixels:image -> width:int -> height:int -> output_filename:string -> unit
 
-  (** [fst3 (r, _, _)] retrieves the first component of an RGB tuple. *)
-  val fst3 : pixel -> int
-
-  (** [snd3 (_, g, _)] retrieves the second component of an RGB tuple. *)
-  val snd3 : pixel -> int
-
-  (** [trd3 (_, _, b)] retrieves the third component of an RGB tuple. *)
-  val trd3 : pixel -> int
-
   (** [calculate_energy_map mask img] calculates the energy map of an image using gradient magnitude. *)
   val calculate_energy_map : (int * int) list option -> image -> energy_map
 
