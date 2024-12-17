@@ -22,12 +22,9 @@ let () =
 (* 
 let () = 
   match Sys.get_argv () |> Array.to_list with
-  | _ :: input_path :: output_path :: [] -> 
-    ( 
-      let mask =
-        let rows = List.init 25 ~f:(fun i -> i + 125) in
-        let cols = List.init 25 ~f:(fun i -> i + 147) in
-        List.concat (List.map rows ~f:(fun x -> List.map cols ~f:(fun y -> (x, y)))) in
+  | _ :: input_path :: num_seams_str :: output_path :: [] -> 
+    (
+      let num_seams = int_of_string num_seams_str in
       let original_image = Image_process.ImageProcess.load_image input_path in 
       Printf.printf "Image loaded\n";
       let seams, result_images = Image_process.ImageProcess.remove_object original_image mask [] in
@@ -42,6 +39,24 @@ let () =
       Gif.Gif.make_gif all_result_images output_path
 
       ) (* Temporary unit placeholder *)
+| _ ->
+  Printf.printf "No image path provided"  *)
+
+
+
+
+(* OBJECT REMOVAL MAIN ---  *)
+(* 
+let () = 
+  match Sys.get_argv () |> Array.to_list with
+  | _ :: input_path :: num_seams_str :: output_path :: [] -> 
+    (
+      let num_seams = int_of_string num_seams_str in
+      let original_image = Image_process.ImageProcess.load_image input_path in 
+      let result_images = Image_process.ImageProcess.remove_seams original_image num_seams in
+      (* Still need to process these modified images as a gif then save to user's output path *)
+      Gif.Gif.make_gif result_images output_path; (* Temporary unit placeholder *)
+    )
 | _ ->
   Printf.printf "No image path provided"  *)
 
