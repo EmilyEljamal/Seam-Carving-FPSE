@@ -14,7 +14,7 @@ Overall, this project serves as a deep dive into algorithmic image processing, e
 
 Below are some sample outputs of the program, showing both vertical and horizontal seam removal:
 
-<img src="beach_output_50_seams_removed.png.gif" alt="Combined Seam GIF" width="300"/>
+<img src="beach_output_30_seams_removed.png.gif" alt="Combined Seam GIF" width="300"/>
 
 
 ---
