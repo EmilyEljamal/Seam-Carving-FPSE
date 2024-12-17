@@ -1,4 +1,5 @@
 open Types
+open Direction
 
 let hot_pink = { r = 255; g = 105; b = 180 }
 
@@ -37,42 +38,23 @@ module ImageProcess = struct
       let temp_rgb_file = convert_image_to_rgb filename in
       convert_rgb_to_pixels ~temp_rgb_file ~width ~height
       
-
-  let calculate_energy_map ~(object_removal: bool) (mask : (int * int) list option) (img : image) : energy_map =
+  let calculate_energy_map ~(object_removal: bool) (mask: (int * int) list option) (img: image) : energy_map =
     let rows, cols = Array_2d.dimensions img in
-  
     let is_in_mask x y =
       match mask with
       | None -> false
       | Some mask_vals -> List.exists (fun (r, c) -> r = x && c = y) mask_vals
     in
-    
     Array_2d.init ~rows ~cols (fun x y ->
       if object_removal && is_in_mask x y then
-        Float.neg_infinity
+        Energy.create Float.neg_infinity
       else
-        let get_neighbor dir_x dir_y =
-          Array_2d.get ~arr:img ~row:(x + dir_x) ~col:(y + dir_y)
-          |> Option.value ~default:{ r = 0; g = 0; b = 0 }
-        in
-    
-        let left = get_neighbor 0 (-1) in
-        let right = get_neighbor 0 1 in
-        let up = get_neighbor (-1) 0 in
-        let down = get_neighbor 1 0 in
-    
-        let dx_r = right.r - left.r in
-        let dx_g = right.g - left.g in
-        let dx_b = right.b - left.b in
-        let dx2 = (dx_r * dx_r) + (dx_g * dx_g) + (dx_b * dx_b) in
-
-        let dy_r = down.r - up.r in
-        let dy_g = down.g - up.g in
-        let dy_b = down.b - up.b in
-        let dy2 = (dy_r * dy_r) + (dy_g * dy_g) + (dy_b * dy_b) in
-    
-        Float.of_int (dx2 + dy2)
+        let directions = [West; East; North; South] in
+        let neighbors = Array_2d.neighbors ~arr:img ~row:x ~col:y ~directions in
+        Energy.calculate_pixel_energy ~neighbors
     )
+      
+      
 
     let draw_seam (img : image) (seam : int array) : image =
       let height, _ = Array_2d.dimensions img in
