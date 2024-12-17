@@ -1,5 +1,7 @@
 open Types
 open Direction
+open Orientation
+(* open Core *)
 
 let hot_pink = { r = 255; g = 105; b = 180 }
 
@@ -47,15 +49,13 @@ module ImageProcess = struct
     in
     Array_2d.init ~rows ~cols (fun x y ->
       if object_removal && is_in_mask x y then
-        Energy.create Float.neg_infinity
+        Float.neg_infinity
       else
         let directions = [West; East; North; South] in
         let neighbors = Array_2d.neighbors ~arr:img ~row:x ~col:y ~directions in
         Energy.calculate_pixel_energy ~neighbors
     )
       
-      
-
     let draw_seam (img : image) (seam : int array) : image =
       let height, _ = Array_2d.dimensions img in
 
@@ -66,16 +66,49 @@ module ImageProcess = struct
         if col = seam.(row) then hot_pink else pixel
       ) img
 
-    let pad_image_with_black (img: image) (original_cols: int) : image =
-      let black_pixel = { r = 0; g = 0; b = 0 } in
-      let rows, cols = Array_2d.dimensions img in
-      Array.init rows (fun i ->
-        Array.init original_cols (fun j ->
-          if j < cols then img.(i).(j) else black_pixel
-        )
-      )
+  let pad_image_with_black (img: image) ~target_rows ~target_cols : image =
+    let rows, cols = Array_2d.dimensions img in
+    Array_2d.init ~rows:target_rows ~cols:target_cols (fun row col ->
+      if row < rows && col < cols then img.(row).(col)
+      else { r = 0; g = 0; b = 0 }  (* Black pixel for padding *)
+    )
+      
+  
+    let rec perform_seam_removal 
+    (image: image) 
+    (remaining_seams: int) 
+    (target_rows: int) 
+    (target_cols: int) : image list =
+  if remaining_seams = 0 then []
+  else
+    let energy_map = calculate_energy_map ~object_removal:false None image in
+    let minimal_energy = Seam_identification.calc_minimal_energy_to_bottom energy_map in
+    let seam = Seam_identification.find_vertical_seam minimal_energy in
+    let image_with_seam = draw_seam image seam in
+    let image_without_seam = Seam_identification.remove_vertical_seam image seam in
+
+    let padded_image = pad_image_with_black image_without_seam ~target_rows ~target_cols in
+    image_with_seam :: padded_image :: 
+    (perform_seam_removal image_without_seam (remaining_seams - 1) target_rows target_cols)
+
+    let remove_seams (image: image) (num_seams: int) (orientation: Orientation.orientation) : image list =
+      match orientation with
+      | Vertical ->
+          let original_rows, original_cols = Array_2d.dimensions image in
+          perform_seam_removal image num_seams original_rows original_cols
+      | Horizontal ->
+          let original_rows, original_cols = Array_2d.dimensions image in
+          let transposed_image = Array_2d.transpose image in
+          let transposed_results = perform_seam_removal transposed_image num_seams original_cols original_rows in
+          List.map Array_2d.transpose transposed_results
     
-    let remove_seams (img: image) (num_seams: int) : image list =
+
+       
+  
+end
+
+
+(* let remove_seams (img: image) (num_seams: int) : image list =
       let original_cols = Array.length img.(0) in  (* original image width *)
       let rec aux img remaining_seams =
         if remaining_seams = 0 then []
@@ -88,12 +121,7 @@ module ImageProcess = struct
           let padded_img = pad_image_with_black img_without_seam original_cols in
           img_with_seam :: padded_img :: (aux img_without_seam (remaining_seams - 1))
       in
-      aux img num_seams
-  
-end
-
-
-
+      aux img num_seams *)
 
 (* let rec remove_seams (img: image) (num_seams: int) : image list =
       if num_seams = 0 then []
