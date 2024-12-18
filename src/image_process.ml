@@ -73,7 +73,6 @@ module ImageProcess = struct
       else { r = 0; g = 0; b = 0 }  (* Black pixel for padding *)
     )
       
-  
     let rec perform_seam_removal 
     (image: image) 
     (remaining_seams: int) 
@@ -103,7 +102,7 @@ module ImageProcess = struct
           List.map Array_2d.transpose transposed_results
     
     let remove_object (img: image) (mask: (int * int) list) (seams: int array list) : (int array list * image list) =
-      let original_cols = Array.length img.(0) in 
+      let original_rows, original_cols = Array_2d.dimensions img in 
       let rec aux img mask seams_list = 
         if List.is_empty mask then (seams_list, [])
         else
@@ -112,7 +111,7 @@ module ImageProcess = struct
           let seam = Seam_identification.find_vertical_seam minimal_energy in
           let img_with_seam = draw_seam img seam in
           let img_without_seam = Seam_identification.remove_vertical_seam img seam in
-          let padded_img = pad_image_with_black img_without_seam original_cols in
+          let padded_img = pad_image_with_black img_without_seam original_rows original_cols in
           
           let updated_mask =
             List.filter (fun (row, col) -> col <> seam.(row)) mask
