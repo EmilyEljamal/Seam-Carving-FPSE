@@ -47,31 +47,34 @@ Make sure you have the following tools installed:
    ```bash
    dune build
 
-2. **Build the Project**  
+2. **Run the Project**  
    Use the following command to execute the seam carving program:
 
 
 **Seam Removal:**
    ```bash
 
-     dune exec seam_carving seam_removal <input_path> <num_seams> <output_path>
+    $ dune exec seam_carving seam_removal <input_path> <output_path>
+    $ Program: Your image size is (height, width). Enter the desired size <height> <width>:
 ```
 **Object Removal:**
 ```bash
-    dune exec seam_carving object_removal <input_path> <output_path>
+   $ dune exec seam_carving object_removal <input_path> <output_path>
 ```
 Afterwards, you will prompted with selecting an image mask for your object:
 ```bash
-    "Please Enter Mask:"
-    <row_start>-<row_end>;<col_start>-<col_end>
+    $ Your image size is (height, width) Enter mask range as <row_start>-<row_end>;
 ```
 Example command using seam_removal_test.png within project folder :
 ```bash 
-dune exec seam_carving seam_removal seam_removal_test.png 10 beach_combined 
-
-
-dune exec seam_carving object_removal object_removal_test.jpg dog_output1
-80-120;80-120
+$ dune exec seam_carving seam_removal seam_removal_test.png beach_combined.gif    
+$ Your image size is (1340, 1022). Enter the desired size <height> <width>:
+$ 1330 1010 
+```
+```bash 
+$ dune exec seam_carving object_removal object_removal_test.jpg dog_output1
+$ Your image size is (200, 200) Enter mask range as <row_start>-<row_end>;<col_start>-<col_end>:
+$ 90-120;90-110
 ```
 
  Note that this process may take some time as seam carving is computationally intensive. Please only use low resolution images and keep the seams removed under 50 or so. For a quick run, we recommend 10 seam removals. To make your images smaller, use this website: https://webupon.com/blog/200x200_pixel-image-converter/ .The average runtime for the test.png is 
