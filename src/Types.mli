@@ -112,8 +112,6 @@ module Array_2d : sig
   (** [bottom_neighbors ~arr ~row ~col] retrieves the bottom neighbors of a cell. *)
   val bottom_neighbors : arr:'a t -> row:int -> col:int -> (direction * 'a) list
 
-  (** [adjacents ~arr ~row ~col] retrieves the four adjacent neighbors of a cell. *)
-  val adjacents : arr:'a t -> row:int -> col:int -> (direction * 'a) list
 
   (** [transpose arr] transposes the 2D array [arr], swapping rows and columns. *)
   val transpose : 'a t -> 'a t
