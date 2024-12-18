@@ -38,18 +38,9 @@ module ImageProcess : sig
   *)
   val remove_seams : image -> int -> orientation -> image list
 
+  (** [remove_object image mask seams] performs object removal by recursively deleting seams on the given image
+  that corresponds to the user provided mask that has the coordinates of the object.
+  *)
   val remove_object : image -> (int * int) list -> int array list -> int array list * image list
 
-
-
-
-    (* * [save_pixels_as_image ~pixels ~width ~height ~output_filename] saves a pixel array as an image file.
-    val save_pixels_as_image : 
-    pixels:image -> width:int -> height:int -> output_filename:string -> unit *)
-
-  (* val add_seam : image -> int array -> image 
-
-  val add_stored_seams : image -> int array list -> image list
-
-  val add_seams : image -> int -> int -> image list  *)
 end
