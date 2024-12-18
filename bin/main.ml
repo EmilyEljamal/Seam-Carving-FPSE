@@ -5,13 +5,20 @@ let load_image_or_exit path =
   try Image_process.ImageProcess.load_image path with
   | _ -> failwithf "Error: Failed to load image from path: %s. Please check the file and try again." path ()
 
-let seam_removal input_path num_seams_str output_path =
+let seam_removal input_path output_path =
   try
+    let original_image = load_image_or_exit input_path in
+    let image_rows, image_cols = Array_2d.dimensions original_image in
+
+    Printf.printf "Enter the amount of seams you'd like to remove <int>:\n";
+    let num_seams_str = Stdlib.read_line () in
     let num_seams =
       try int_of_string num_seams_str with
       | _ -> failwith "Error: num_seams must be an integer."
     in
-    let original_image = load_image_or_exit input_path in
+
+    if num_seams < 0 || num_seams > image_rows || num_seams > image_cols then
+      failwith (Printf.sprintf "Error: num_seams (%d) is negative or exceeds image dimensions (rows: %d, cols: %d)." num_seams image_rows image_cols);
 
     let vertical_images =
       Image_process.ImageProcess.remove_seams original_image num_seams Orientation.Vertical
@@ -87,8 +94,8 @@ let object_removal input_path output_path =
 let () =
   try
     match Sys.get_argv () |> Array.to_list with
-    | _ :: "seam_removal" :: input_path :: num_seams :: output_path :: [] ->
-        seam_removal input_path num_seams output_path
+    | _ :: "seam_removal" :: input_path :: output_path :: [] ->
+        seam_removal input_path output_path
     | _ :: "object_removal" :: input_path :: output_path :: [] ->
         object_removal input_path output_path
     | _ ->
