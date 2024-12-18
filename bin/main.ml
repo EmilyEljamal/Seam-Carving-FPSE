@@ -1,140 +1,74 @@
-[@@@ocaml.warning "-26"]
-[@@@ocaml.warning "-27"]
 open Core
+open Types
 
+let load_image_or_exit path =
+  match Image_process.ImageProcess.load_image path with
+  | exception _ -> failwithf "Failed to load image from path: %s" path ()
+  | image -> image
 
-let () = 
-  match Sys.get_argv () |> Array.to_list with
-  | _ :: input_path :: output_path :: [] -> 
-    ( 
-      let mask =
-        let rows = List.init 50 ~f:(fun i -> i + 190) in
-        let cols = List.init 40 ~f:(fun i -> i + 290) in
-        List.concat (List.map rows ~f:(fun x -> List.map cols ~f:(fun y -> (x, y)))) in
-      let original_image = Image_process.ImageProcess.load_image input_path in 
-      Printf.printf "Image loaded\n";
-      let seams, result_images = Image_process.ImageProcess.remove_object original_image mask [] in
-      let final_image = Option.value_exn (List.hd (List.rev result_images)) in 
-      (* let first_image = List.hd result_images in
-      (* let original_rows, original_cols = Types.Array_2d.dimensions (Option.value_exn first_image) in *)
-      let final_image = Option.value_exn (List.hd (List.rev result_images)) in  *)
-      (* let new_rows, new_cols = Types.Array_2d.dimensions (final_image) in
-      let updated_images_with_seams = Image_process.ImageProcess.add_seams (final_image) original_cols new_cols None  in  
-      let all_result_images = result_images @ updated_images_with_seams in *)
-      (*let result_images = Image_process.ImageProcess.remove_seams original_image num_seams in
-      Still need to process these modified images as a gif then save to user's output path *)
-      Gif.Gif.make_gif result_images output_path final_image
-      ) (* Temporary unit placeholder *)
-| _ ->
-  Printf.printf "No image path provided" 
-(* let () = 
-  match Sys.get_argv () |> Array.to_list with
-  | _ :: input_path :: num_seams_str :: output_path :: [] -> 
-    (
-      let num_seams = int_of_string num_seams_str in
-      let original_image = Image_process.ImageProcess.load_image input_path in 
-      let result_images = Image_process.ImageProcess.remove_seams original_image num_seams in
-      (* Still need to process these modified images as a gif then save to user's output path *)
-      Gif.Gif.make_gif result_images output_path
-      )
-| _ ->
-  Printf.printf "No image path provided"  *)
-
-
-
-
-(* OBJECT REMOVAL MAIN ---  *)
-(*
-let () = 
-  match Sys.get_argv () |> Array.to_list with
-  | _ :: input_path :: num_seams_str :: output_path :: [] -> 
+let seam_removal input_path num_seams_str output_path =
     let num_seams = int_of_string num_seams_str in
     let original_image = Image_process.ImageProcess.load_image input_path in 
     
-    (* Remove vertical seams first *)
     let vertical_images = Image_process.ImageProcess.remove_seams 
       original_image num_seams Orientation.Vertical 
     in
 
-    (* Use the last image from vertical as input for horizontal seams *)
     let last_vertical_image = List.last_exn vertical_images in
     let horizontal_images = Image_process.ImageProcess.remove_seams 
       last_vertical_image num_seams Orientation.Horizontal
     in
 
-    (* Combine vertical and horizontal images into a single sequence *)
     let all_images = vertical_images @ horizontal_images in
+    let final_image =
+      match List.rev all_images |> List.hd with
+      | None -> failwith "No resulting images from object removal"
+      | Some img -> img
+    in
+    Gif.Gif.make_gif all_images output_path final_image;
+    Printf.printf "Saved resulting GIF to %s\n" output_path
 
-    (* Save the combined images as a GIF *)
-    Gif.Gif.make_gif all_images output_path
+  let parse_range range_str =
+    match String.split ~on:'-' range_str with
+    | [start_str; end_str] ->
+        let start_ = int_of_string start_str in
+        let end_ = int_of_string end_str in
+        (start_, end_)
+    | _ -> failwithf "Invalid range format: %s" range_str ()
+    
+  let parse_mask mask_str =
+    match String.split ~on:';' mask_str with
+    | [row_range; col_range] ->
+        let (row_start, row_end) = parse_range row_range in
+        let (col_start, col_end) = parse_range col_range in
+        List.concat_map (List.range row_start (row_end + 1)) ~f:(fun row ->
+            List.map (List.range col_start (col_end + 1)) ~f:(fun col -> (row, col)))
+    | _ -> failwithf "Invalid mask format: %s" mask_str ()
 
+  let object_removal input_path output_path =
+    Printf.printf "Enter mask range as row_start-row_end;col_start-col_end:\n";
+    let mask_str = Stdlib.read_line () in
+    let mask = parse_mask mask_str in
+    Printf.printf "Loading in image!\n";
+    let original_image = load_image_or_exit input_path in
+    Printf.printf "Loaded image for object removal\n";
+    let _, result_images = Image_process.ImageProcess.remove_object original_image mask [] in
+    let final_image =
+      match List.rev result_images |> List.hd with
+      | None -> failwith "No resulting images from object removal"
+      | Some img -> img
+    in
+    Gif.Gif.make_gif result_images output_path final_image;
+    Printf.printf "Saved resulting GIF to %s\n" output_path
+
+let () =
+  match Sys.get_argv () |> Array.to_list with
+  | _ :: "seam_removal" :: input_path :: num_seams :: output_path :: [] ->
+      seam_removal input_path num_seams output_path
+  | _ :: "object_removal" :: input_path :: output_path :: [] ->
+      object_removal input_path output_path
   | _ ->
-      Printf.printf "Usage: <input_path> <num_seams> <output_path>\n" *)
-
-
-
-(* let () = 
-  match Sys.get_argv () |> Array.to_list with
-  | _ :: input_path :: num_seams_str :: output_path :: [] -> 
-    (
-      let num_seams = int_of_string num_seams_str in
-      let original_image = Image_process.ImageProcess.load_image input_path in 
-      let result_images = Image_process.ImageProcess.remove_seams original_image num_seams in
-      (* Still need to process these modified images as a gif then save to user's output path *)
-      Gif.Gif.make_gif result_images output_path
-      )
-| _ ->
-  Printf.printf "No image path provided" 
-
- *)
-
-
-(* OBJECT REMOVAL MAIN ---  *)
-(* 
-let () = 
-  match Sys.get_argv () |> Array.to_list with
-  | _ :: input_path :: num_seams_str :: output_path :: [] -> 
-    (
-      let num_seams = int_of_string num_seams_str in
-      let original_image = Image_process.ImageProcess.load_image input_path in 
-      Printf.printf "Image loaded\n";
-      let seams, result_images = Image_process.ImageProcess.remove_object original_image mask [] in
-      let final_image = Option.value_exn (List.hd (List.rev result_images)) in 
-      let first_image = List.hd result_images in
-      let original_rows, original_cols = Types.Array_2d.dimensions (Option.value_exn first_image) in
-      let new_rows, new_cols = Types.Array_2d.dimensions ( final_image) in 
-      let updated_images_with_seams = Image_process.ImageProcess.add_seams final_image original_cols new_cols  in (* Combine all resulting images into one list *) 
-      let all_result_images = result_images @ updated_images_with_seams in
-      (*let result_images = Image_process.ImageProcess.remove_seams original_image num_seams in
-      Still need to process these modified images as a gif then save to user's output path *)
-      Gif.Gif.make_gif all_result_images output_path
-
-      ) (* Temporary unit placeholder *)
-| _ ->
-  Printf.printf "No image path provided"  *)
-
-
-
-
-(* OBJECT REMOVAL MAIN ---  *)
-(* 
-let () = 
-  match Sys.get_argv () |> Array.to_list with
-  | _ :: input_path :: num_seams_str :: output_path :: [] -> 
-    (
-      let num_seams = int_of_string num_seams_str in
-      let original_image = Image_process.ImageProcess.load_image input_path in 
-      let result_images = Image_process.ImageProcess.remove_seams original_image num_seams in
-      (* Still need to process these modified images as a gif then save to user's output path *)
-      Gif.Gif.make_gif result_images output_path; (* Temporary unit placeholder *)
-    )
-| _ ->
-  Printf.printf "No image path provided"  *)
-
-(*
-  load image
-  calculate energy map
-  calculate minimal energy to the bottom
-  get vertical seam
-  remove seam
-*)
+      Printf.printf "Usage:\n";
+      Printf.printf "  Seam Removal: seam_removal <input_path> <num_seams> <output_path>\n";
+      Printf.printf "  Object Removal: object_removal <input_path> <output_path>\n";
+      exit 1
