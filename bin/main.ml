@@ -10,7 +10,7 @@ let seam_removal input_path output_path =
     let original_image = load_image_or_exit input_path in
     let image_rows, image_cols = Array_2d.dimensions original_image in
 
-    Printf.printf "Enter the desired size <height> <width>:\n";
+    Printf.printf "Your image size is (%d, %d). Enter the desired size <height> <width>:\n" image_rows image_cols;
     let size_str = Stdlib.read_line () in
     let desired_height, desired_width =
       try
@@ -79,12 +79,13 @@ let parse_mask mask_str =
 
 let object_removal input_path output_path =
   try
-    Printf.printf "Enter mask range as <row_start>-<row_end>;<col_start>-<col_end>:\n";
-    let mask_str = Stdlib.read_line () in
-    let mask = parse_mask mask_str in
     let original_image = load_image_or_exit input_path in
     let image_rows, image_cols = Array_2d.dimensions original_image in
 
+    Printf.printf "Your image size is (%d, %d) Enter mask range as <row_start>-<row_end>;<col_start>-<col_end>:\n" image_rows image_cols;
+    let mask_str = Stdlib.read_line () in
+    let mask = parse_mask mask_str in
+    
     if List.is_empty mask then failwith "Error: The mask is empty. Please specify a valid mask range.";
 
     let valid_mask = validate_mask mask image_rows image_cols in
