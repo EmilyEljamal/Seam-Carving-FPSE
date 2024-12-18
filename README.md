@@ -49,18 +49,41 @@ Make sure you have the following tools installed:
 
 2. **Build the Project**  
    Use the following command to execute the seam carving program:
+
+
+**Seam Removal:**
    ```bash
-    dune exec seam_carving -- <input_image> <num_seams> <output_image>
-Example command using test.png within project folder :
+
+     dune exec seam_carving seam_removal <input_path> <num_seams> <output_path>
+```
+**Object Removal:**
+```bash
+    dune exec seam_carving object_removal <input_path> <output_path>
+```
+Afterwards, you will prompted with selecting an image mask for your object:
+```bash
+    "Please Enter Mask:"
+    <row_start>-<row_end>;<col_start>-<col_end>
+```
+Example command using seam_removal_test.png within project folder :
 ```bash 
-dune exec seam_carving -- test.png 10 beach_combined.gif 
+dune exec seam_carving seam_removal seam_removal_test.png 10 beach_combined 
+
+
+dune exec seam_carving object_removal object_removal_test.jpg dog_output1
+80-120;80-120
 ```
 
- Note that this process may take some time as seam carving is computationally intensive. Please only use low resolution images and keep the seams removed under 50 or so. For a quick run, we recommend 10 seam removals. The average runtime for the test.png is 
+ Note that this process may take some time as seam carving is computationally intensive. Please only use low resolution images and keep the seams removed under 50 or so. For a quick run, we recommend 10 seam removals. To make your images smaller, use this website: https://webupon.com/blog/200x200_pixel-image-converter/ .The average runtime for the test.png is 
 ```bash
-    dune exec seam_carving -- test.png 50 beach_output1.png  
-
+    dune exec seam_carving seam_removal seam_removal_test.png 50 beach_output1.png  
     185.00s user 6.21s system 93% cpu 3:24.09 total
+```
+
+Testing Coverage:
+```bash
+bisect-ppx-report html                                                    
+open _coverage/index.html 
 ```
 References:
 

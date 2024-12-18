@@ -73,11 +73,7 @@ module ImageProcess = struct
       else { r = 0; g = 0; b = 0 }  (* Black pixel for padding *)
     )
     
-  let rec perform_seam_removal 
-  (image: image) 
-  (remaining_seams: int) 
-  (target_rows: int) 
-  (target_cols: int) : image list =
+  let rec perform_seam_removal (image: image) (remaining_seams: int) (target_rows: int) (target_cols: int) : image list =
     if remaining_seams = 0 then []
     else
       let energy_map = calculate_energy_map ~object_removal:false None image in

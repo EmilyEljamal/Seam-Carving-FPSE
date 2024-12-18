@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8"/>
     <title>Types.ml &mdash; Coverage report</title>
-    <meta name="description" content="92.05% coverage in src/Types.ml">
+    <meta name="description" content="96.59% coverage in src/Types.ml">
     <link rel="stylesheet" href="../coverage.css"/>
     <script src="../highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -15,12 +15,9 @@
           <span class="dirname">src/</span>Types.ml
         </a>
       </h1>
-      <h2>92.05%</h2>
+      <h2>96.59%</h2>
     </div>
     <div id="navbar">
-      <span class="unvisited" style="top:12.70%"></span>
-      <span class="unvisited" style="bottom:37.57%"></span>
-      <span class="unvisited" style="bottom:37.04%"></span>
       <span class="some-visited" style="bottom:34.39%"></span>
       <span class="some-visited" style="bottom:24.34%"></span>
       <span class="some-visited" style="bottom:3.70%"></span>
@@ -51,7 +48,7 @@
 <a id="L21"></a><span > </span>
 <a id="L22"></a><span > </span>
 <a id="L23"></a><span > </span>
-<a id="L24"></a><span class="unvisited"> </span>
+<a id="L24"></a><span class="visited"> </span>
 <a id="L25"></a><span class="visited"> </span>
 <a id="L26"></a><span class="visited"> </span>
 <a id="L27"></a><span class="visited"> </span>
@@ -145,8 +142,8 @@
 <a id="L115"></a><span class="visited"> </span>
 <a id="L116"></a><span > </span>
 <a id="L117"></a><span > </span>
-<a id="L118"></a><span class="unvisited"> </span>
-<a id="L119"></a><span class="unvisited"> </span>
+<a id="L118"></a><span class="visited"> </span>
+<a id="L119"></a><span class="visited"> </span>
 <a id="L120"></a><span > </span>
 <a id="L121"></a><span > </span>
 <a id="L122"></a><span > </span>
@@ -434,22 +431,22 @@ module Direction = struct
     | SouthEast
 
   let direction_to_offset = function
-    | <span data-count="0">N</span>eutral    -&gt; (0, 0)
-    | <span data-count="2">N</span>orth      -&gt; (-1, 0)
-    | <span data-count="16">S</span>outh      -&gt; (1, 0)
-    | <span data-count="8">E</span>ast       -&gt; (0, 1)
-    | <span data-count="2">W</span>est       -&gt; (0, -1)
+    | <span data-count="8">N</span>eutral    -&gt; (0, 0)
+    | <span data-count="46">N</span>orth      -&gt; (-1, 0)
+    | <span data-count="78">S</span>outh      -&gt; (1, 0)
+    | <span data-count="52">E</span>ast       -&gt; (0, 1)
+    | <span data-count="46">W</span>est       -&gt; (0, -1)
     | <span data-count="6">N</span>orthWest  -&gt; (-1, -1)
     | <span data-count="6">N</span>orthEast  -&gt; (-1, 1)
-    | <span data-count="20">S</span>outhWest  -&gt; (1, -1)
-    | <span data-count="20">S</span>outhEast  -&gt; (1, 1)
+    | <span data-count="36">S</span>outhWest  -&gt; (1, -1)
+    | <span data-count="42">S</span>outhEast  -&gt; (1, 1)
 
   let horizontal_offset direction =
-    <span data-count="22">l</span>et _, dy = direction_to_offset direction in
-    <span data-count="22">d</span>y
+    <span data-count="38">l</span>et _, dy = direction_to_offset direction in
+    <span data-count="38">d</span>y
 
   let next_col ~col ~direction =
-    <span data-count="14">c</span>ol + horizontal_offse<span data-count="14">t</span> direction
+    <span data-count="30">c</span>ol + horizontal_offse<span data-count="30">t</span> direction
 
 end
 
@@ -466,26 +463,26 @@ type pixel = {
     type t = float
   
     let calculate_pixel_energy ~neighbors : t =
-      <span data-count="2">l</span>et get_rgb_diff n1 n2 =
-        <span data-count="4">l</span>et dx_r = n2.r - n1.r in
+      <span data-count="46">l</span>et get_rgb_diff n1 n2 =
+        <span data-count="92">l</span>et dx_r = n2.r - n1.r in
         let dx_g = n2.g - n1.g in
         let dx_b = n2.b - n1.b in
         (dx_r * dx_r) + (dx_g * dx_g) + (dx_b * dx_b)
       in
     
       let find_neighbor dir =
-        <span data-count="8">L</span>ist.Assoc.find neighbors dir ~equal:Poly.equal
-        |&gt; <span data-count="8">O</span>ption.value ~default:{ r = 0; g = 0; b = 0 }
+        <span data-count="184">L</span>ist.Assoc.find neighbors dir ~equal:Poly.equal
+        |&gt; <span data-count="184">O</span>ption.value ~default:{ r = 0; g = 0; b = 0 }
       in
     
       let west  = find_neighbor West in
-      <span data-count="2">l</span>et east  = find_neighbor East in
-      <span data-count="2">l</span>et north = find_neighbor North in
-      <span data-count="2">l</span>et south = find_neighbor South in
+      <span data-count="46">l</span>et east  = find_neighbor East in
+      <span data-count="46">l</span>et north = find_neighbor North in
+      <span data-count="46">l</span>et south = find_neighbor South in
     
-      <span data-count="2">l</span>et dx2 = get_rgb_diff west east in
-      <span data-count="2">l</span>et dy2 = get_rgb_diff north south in
-      <span data-count="2">F</span>loat.of_int (dx2 + dy2)
+      <span data-count="46">l</span>et dx2 = get_rgb_diff west east in
+      <span data-count="46">l</span>et dy2 = get_rgb_diff north south in
+      <span data-count="46">F</span>loat.of_int (dx2 + dy2)
   end
 
   module Pair = struct
@@ -495,13 +492,13 @@ type pixel = {
     } [@@deriving compare]
   
     let create ~in_energy ~in_direction : t =
-      <span data-count="126">{</span> energy = in_energy; direction = in_direction }
+      <span data-count="190">{</span> energy = in_energy; direction = in_direction }
   
     let get_energy (_pair : t) : float =
-      <span data-count="132">_</span>pair.energy
+      <span data-count="212">_</span>pair.energy
   
     let get_direction (_pair : t) : direction =
-      <span data-count="64">_</span>pair.direction
+      <span data-count="80">_</span>pair.direction
   
     let update_energy (_pair : t) (_energy : float) : t =
       <span data-count="2">{</span> energy = _energy; direction = _pair.direction }
@@ -511,25 +508,25 @@ module Array_2d = struct
   type 'a t = 'a array array
 
   let init ~rows ~cols (f : int -&gt; int -&gt; 'a) : 'a t =
-    <span data-count="22">A</span>rray.init rows ~f:(fun i -&gt; <span data-count="64">A</span>rray.init cols ~f:(fun j -&gt; <span data-count="186">f</span> i j))
+    <span data-count="50">A</span>rray.init rows ~f:(fun i -&gt; <span data-count="124">A</span>rray.init cols ~f:(fun j -&gt; <span data-count="312">f</span> i j))
 
   let get ~arr ~row ~col : 'a option =
-    <span data-count="82">O</span>ption.try_with (fun () -&gt; <span data-count="82">a</span>rr.(row).(col))
+    <span data-count="322">O</span>ption.try_with (fun () -&gt; <span data-count="322">a</span>rr.(row).(col))
 
   let get_row (arr : 'a t) (row : int) : 'a array option =
-    <span data-count="10">O</span>ption.try_with (fun () -&gt; <span data-count="10">a</span>rr.(row))
+    <span data-count="18">O</span>ption.try_with (fun () -&gt; <span data-count="18">a</span>rr.(row))
 
   let dimensions (arr : 'a t) : int * int =
-    <span data-count="12">(</span>Array.lengt<span data-count="12">h</span> arr, Array.lengt<span data-count="12">h</span> arr.(0))
+    <span data-count="82">(</span>Array.lengt<span data-count="82">h</span> arr, Array.lengt<span data-count="82">h</span> arr.(0))
 
-  let set ~(arr: 'a t) ~row ~col value = <span data-count="22">a</span>rr.(row).(col) &lt;- value
+  let set ~(arr: 'a t) ~row ~col value = <span data-count="54">a</span>rr.(row).(col) &lt;- value
 
   let map (f : int -&gt; int -&gt; 'a -&gt; 'b) (arr : 'a t) : 'b t =
-    <span data-count="8">A</span>rray.mapi arr ~f:(fun y r -&gt; <span data-count="22">A</span>rray.mapi r ~f:(<span data-count="22">f</span> y))
+    <span data-count="16">A</span>rray.mapi arr ~f:(fun y r -&gt; <span data-count="38">A</span>rray.mapi r ~f:(<span data-count="38">f</span> y))
 
   let mapi (f : int -&gt; int -&gt; 'a -&gt; 'b) (arr : 'a t) : 'b t =
-    <span data-count="0">A</span>rray.mapi ~f:(fun row row_array -&gt;
-      <span data-count="0">A</span>rray.mapi ~f:(fun col value -&gt; <span data-count="0">f</span> row col value) row_array
+    <span data-count="10">A</span>rray.mapi ~f:(fun row row_array -&gt;
+      <span data-count="20">A</span>rray.mapi ~f:(fun col value -&gt; <span data-count="44">f</span> row col value) row_array
     ) arr
 
   let copy (arr: 'a t) : 'a t =
@@ -540,15 +537,15 @@ module Array_2d = struct
     )
 
   let neighbors ~arr ~row ~col ~directions : (direction * 'a) list =
-    <span data-count="16">L</span>ist.filter_map directions ~f:(fun dir -&gt;
-      <span data-count="50">l</span>et dx, dy = Direction.direction_to_offset dir in
-      <span data-count="50">m</span>atch get ~arr ~row:(row + dx) ~col:(col + dy) with
-      | <span data-count="42">S</span>ome value -&gt; Some (dir, value)
-      | <span data-count="8">N</span>one -&gt; None
+    <span data-count="76">L</span>ist.filter_map directions ~f:(fun dir -&gt;
+      <span data-count="274">l</span>et dx, dy = Direction.direction_to_offset dir in
+      <span data-count="274">m</span>atch get ~arr ~row:(row + dx) ~col:(col + dy) with
+      | <span data-count="176">S</span>ome value -&gt; Some (dir, value)
+      | <span data-count="98">N</span>one -&gt; None
     )
 
   let bottom_neighbors ~arr ~row ~col : (direction * 'a) list =
-    <span data-count="14">n</span>eighbors ~arr ~row ~col ~directions:[SouthWest; South; SouthEast]
+    <span data-count="30">n</span>eighbors ~arr ~row ~col ~directions:[SouthWest; South; SouthEast]
 
 
   let transpose (arr : 'a t) : 'a t =
@@ -568,17 +565,17 @@ module Minimal_energy_map = struct
   type t = Pair.t Array_2d.t
 
   let from_energy_map (energy_map : float Array_2d.t) : t =
-    <span data-count="4">A</span>rray_2d.map (fun _ _ energy -&gt; <span data-count="36">P</span>air.create ~in_energy:energy ~in_direction:Neutral) energy_map
+    <span data-count="12">A</span>rray_2d.map (fun _ _ energy -&gt; <span data-count="68">P</span>air.create ~in_energy:energy ~in_direction:Neutral) energy_map
   
 
   let get_minimal_energy (map : t) (row : int) : int =
-    <span data-count="6">m</span>atch Array_2d.get_row map row with
+    <span data-count="14">m</span>atch Array_2d.get_row map row with
     | <span data-count="2">N</span>one -&gt; failwith "Invalid row index"
-    | <span data-count="4">S</span>ome x -&gt;
+    | <span data-count="12">S</span>ome x -&gt;
         Array.foldi x ~init:(0, Float.infinity) ~f:(fun col_idx (min_idx, min_val) pair -&gt;
-            <span data-count="12">l</span>et energy = Pair.get_energy pair in
-            <span data-count="12">i</span>f (Float.compar<span data-count="12">e</span> energy min_val &lt; 0) then <span data-count="4">(</span>col_idx, energy) else <span data-count="8">(</span>min_idx, min_val))
-        |&gt; <span data-count="4">f</span>st
+            <span data-count="28">l</span>et energy = Pair.get_energy pair in
+            <span data-count="28">i</span>f (Float.compar<span data-count="28">e</span> energy min_val &lt; 0) then <span data-count="12">(</span>col_idx, energy) else <span data-count="16">(</span>min_idx, min_val))
+        |&gt; <span data-count="12">f</span>st
 
   let update_direction (map : t) (row : int) (col : int) (direction : direction) : unit =
     <span data-count="4">m</span>atch Array_2d.get ~arr:map ~row:row ~col:col with
@@ -591,11 +588,11 @@ module Minimal_energy_map = struct
     <span data-count="2">A</span>rray_2d.map (fun row col pair -&gt; <span data-count="8">P</span>air.get_energy pair) map
     
   let map_bottom_to_top (arr : t) ~(f : int -&gt; int -&gt; Pair.t -&gt; Pair.t) : t =
-    <span data-count="4">l</span>et rows = Array.length arr in
-    <span data-count="4">l</span>et cols = if rows &gt; 0 then <span data-count="4">A</span>rray.lengt<span data-count="4">h</span> arr.(0) else <span data-count="0">0</span> in
+    <span data-count="12">l</span>et rows = Array.length arr in
+    <span data-count="12">l</span>et cols = if rows &gt; 0 then <span data-count="12">A</span>rray.lengt<span data-count="12">h</span> arr.(0) else <span data-count="0">0</span> in
     Array.init rows ~f:(fun row -&gt;
-      <span data-count="10">A</span>rray.init cols ~f:(fun col -&gt;
-        <span data-count="26">l</span>et original_row = rows - 1 - row in
+      <span data-count="26">A</span>rray.init cols ~f:(fun col -&gt;
+        <span data-count="58">l</span>et original_row = rows - 1 - row in
         f original_row col arr.(original_row).(col)
       )
     )
