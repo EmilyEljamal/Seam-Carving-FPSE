@@ -108,41 +108,6 @@ module ImageProcess = struct
           let (new_seams, images) = aux img_without_seam updated_mask (seam :: seams_list) in 
           (new_seams, img_with_seam :: padded_img :: images)
         in aux img mask seams
-
-    let add_seam (img: image) (seam_idx: int array) : image =
-      let rows, cols = Array_2d.dimensions img in
-      Array_2d.init ~rows ~cols:(cols + 1) (fun row col ->
-        if col < seam_idx.(row) then
-          img.(row).(col)
-        else if col = seam_idx.(row) then
-          let left = img.(row).(col) in
-          let right = if col + 1 < cols then img.(row).(col + 1) else left in
-          { r = (left.r + right.r) / 2; g = (left.g + right.g) / 2; b = (left.b + right.b) / 2 }
-        else
-          img.(row).(col - 1)
-      )
-      
-      let rec add_seams (img: image) (width: int) (new_width: int) (previous_seam: int array option) : image list =
-        if width = new_width then []
-        else
-          let energy_map = calculate_energy_map ~object_removal:false None img in
-
-          let penalized_energy_map = match previous_seam with
-          | Some seam -> 
-              Array_2d.mapi (fun row col energy ->
-                  if col = seam.(row) || 
-                    (col = seam.(row) - 1) || 
-                    (col = seam.(row) + 1) 
-                  then Float.neg_infinity else energy
-              ) energy_map
-          | None -> energy_map
-          in
-
-          let minimal_energy_map = Seam_identification.calc_minimal_energy_to_bottom penalized_energy_map in
-          let seam = Seam_identification.find_vertical_seam minimal_energy_map in
-          let drawn_img = draw_seam img seam in
-          let updated_img = add_seam img seam in
-          drawn_img :: updated_img :: add_seams updated_img width (new_width + 1) (Some seam)
 end
 
 
@@ -195,3 +160,39 @@ end
           if Sys.command command <> 0 then
             failwith "Failed to save screenshot";
           Sys.remove temp_rgb_file *)
+
+(* 
+          let add_seam (img: image) (seam_idx: int array) : image =
+            let rows, cols = Array_2d.dimensions img in
+            Array_2d.init ~rows ~cols:(cols + 1) (fun row col ->
+              if col < seam_idx.(row) then
+                img.(row).(col)
+              else if col = seam_idx.(row) then
+                let left = img.(row).(col) in
+                let right = if col + 1 < cols then img.(row).(col + 1) else left in
+                { r = (left.r + right.r) / 2; g = (left.g + right.g) / 2; b = (left.b + right.b) / 2 }
+              else
+                img.(row).(col - 1)
+            )
+            
+            let rec add_seams (img: image) (width: int) (new_width: int) (previous_seam: int array option) : image list =
+              if width = new_width then []
+              else
+                let energy_map = calculate_energy_map ~object_removal:false None img in
+      
+                let penalized_energy_map = match previous_seam with
+                | Some seam -> 
+                    Array_2d.mapi (fun row col energy ->
+                        if col = seam.(row) || 
+                          (col = seam.(row) - 1) || 
+                          (col = seam.(row) + 1) 
+                        then Float.neg_infinity else energy
+                    ) energy_map
+                | None -> energy_map
+                in
+      
+                let minimal_energy_map = Seam_identification.calc_minimal_energy_to_bottom penalized_energy_map in
+                let seam = Seam_identification.find_vertical_seam minimal_energy_map in
+                let drawn_img = draw_seam img seam in
+                let updated_img = add_seam img seam in
+                drawn_img :: updated_img :: add_seams updated_img width (new_width + 1) (Some seam) *)

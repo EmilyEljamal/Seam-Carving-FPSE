@@ -26,8 +26,8 @@ module ImageProcess : sig
   val remove_seams : image -> int -> image list
 
   val remove_object : image -> (int * int) list -> int array list -> int array list * image list
-  val add_seam : image -> int array -> image 
-  val add_seams : image -> int -> int -> int array option -> image list 
+  (* val add_seam : image -> int array -> image 
+  val add_seams : image -> int -> int -> int array option -> image list  *)
 
     (* * [save_pixels_as_image ~pixels ~width ~height ~output_filename] saves a pixel array as an image file.
     val save_pixels_as_image : 
