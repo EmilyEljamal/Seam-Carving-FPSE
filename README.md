@@ -31,6 +31,15 @@ Make sure you have the following tools installed:
 - **OCaml** and **Dune** for building and running the program.
 - **ImageMagick** (version 7+), which is used for processing images and generating GIFs.
 
+This project requires the following system tools:
+
+- **ImageMagick**: A software suite for image manipulation. Install it via:
+  - On Debian/Ubuntu: `sudo apt-get install imagemagick`
+  - On macOS: `brew install imagemagick`
+  - On Fedora: `sudo dnf install imagemagick`
+
+Ensure that the `convert` and `identify` commands are available in your `PATH`.
+
 > ⚠️ **WARNING**: In ImageMagick v7+, the `convert` command is deprecated. Use `magick convert` instead.  
 > If you see the message:
 > ```

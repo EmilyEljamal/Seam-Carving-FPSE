@@ -101,12 +101,24 @@ let object_removal input_path output_path =
   with
   | Failure msg -> Printf.eprintf "%s\n" msg; exit 1
 
+  let check_imagemagick () =
+    try
+      let _ = Sys_unix.command "convert --version > /dev/null 2>&1" in
+      let _ = Sys_unix.command "identify --version > /dev/null 2>&1" in
+      ()
+    with _ ->
+      failwith "ImageMagick is not installed. Please install it and try again."
+  
+  
+
 let () =
   try
     match Sys.get_argv () |> Array.to_list with
     | _ :: "seam_removal" :: input_path :: output_path :: [] ->
+        check_imagemagick ();
         seam_removal input_path output_path
     | _ :: "object_removal" :: input_path :: output_path :: [] ->
+        check_imagemagick ();
         object_removal input_path output_path
     | _ ->
         Printf.printf "Usage:\n";
