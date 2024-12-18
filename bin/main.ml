@@ -32,7 +32,7 @@ let seam_removal input_path output_path =
     let vertical_images =
       Image_process.ImageProcess.remove_seams original_image (image_cols - desired_width) Orientation.Vertical
     in
-    let last_vertical_image = List.last vertical_images |> Option.value_exn ~message:"Error: No images generated during seam removal." in
+    let last_vertical_image = List.last vertical_images |> Option.value ~default:original_image in
 
     let horizontal_images =
       Image_process.ImageProcess.remove_seams last_vertical_image (image_rows - desired_height) Orientation.Horizontal
