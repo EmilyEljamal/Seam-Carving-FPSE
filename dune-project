@@ -2,7 +2,7 @@
 
 (generate_opam_files true)
 
-(authors "Author Name")
+(authors "Maria-Noelia Herne Emily Eljamal")
 
 (maintainers "maintainer@example.com")
 

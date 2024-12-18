@@ -1,104 +1,147 @@
-module Pair :
-  sig
-    type t =
-      { energy : float
-      ; direction   : int } [@@deriving compare]
-    (** The [Pair] type holds data for energy and direction, representing a single cell in the minimal energy map. *)
-
-    val create : in_energy: float -> in_direction: int -> t
-    (** [create ~energy ~direction] initializes a Pair with the given energy and direction values. *)
-
-    val get_energy : t -> float
-    (** [get_energy pair] retrieves the energy value from a Pair. *)
-
-    val get_direction : t -> int
-    (** [get_direction pair] retrieves the direction value from a Pair. *)
-
-    val update_energy : t -> float -> t
-    (** [update_energy pair energy] updates the energy field in a Pair, returning a new Pair. *)
-  end
-
-module Array_2d : 
-sig 
-    type 'a t = 'a array array
-    (** A 2D array type alias for general use in image and energy map representations. *)
-
-    val init : rows: int -> cols: int -> (int -> int -> 'a) -> 'a t
-    (** [init rows cols f] initializes a 2D array with the given dimensions, setting each element
-        according to the function [f], which takes row and column indices.
-        - [rows]: The number of rows.
-        - [cols]: The number of columns.
-        - [f]: A function defining how each element is initialized. *)
-
-    val get : arr: 'a t -> row: int -> col: int -> 'a option
-    (** [get arr x y] retrieves an element at the specified row and column in a 2D array. *)
-
-    val get_row : 'a t -> int -> 'a array option
-    (** [get_row arr x] retrieves the elements in a row at the specified row in a 2D array. *)
-
-    val dimensions : 'a t -> int * int
-    (** [dimensions arr] returns the dimensions (rows, cols) of a 2D array. *)
-
-    val adjacents : arr: 'a t -> row: int -> col: int -> 'a list
-    (** [adjacents arr x y] retrieves all adjacent elements in the four main directions (up, down, left, right)
-        around the element at (x, y).
-        - Returns: A list of adjacent elements. *)
-
-    val bottom_neighbors : arr:'a t -> row:int -> col:int -> 'a list
-    (** [bottom_neighbors ~arr ~row ~col] returns a list of the three bottom neighbors of the cell at position [(row, col)] in [arr].
-        The bottom neighbors are the cells directly below and diagonally below to the left and right, specifically:
-        - SW (row+1, col-1)
-        - S  (row+1, col)
-        - SE (row+1, col+1)
-    
-        If any of these positions are out of bounds, they are skipped, so the returned list may have fewer than three elements. *)
-        
-    val map : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
-    (** [map f arr] applies the function [f] to each element in the 2D array [arr], returning a new 2D array. *)
-
-    val mapi : (int -> int -> 'a -> 'b) -> 'a t -> 'b t 
-    (** [mapi f arr] applies the function [f] to each element in the 2D array [arr], along with its row and column indices.
-    - [f row col value]: A function that takes the row index [row], column index [col], and the value [value] at that position.
-    - [arr]: The input 2D array.
-    - Returns: A new 2D array with the results of applying [f] to each element.
-    *)
+(** Module representing orientations for seam removal *)
+module Orientation : sig
+  type orientation =
+    | Vertical
+    | Horizontal
 end
 
-type pixel = int * int * int 
-(** Type alias for an pixel representation as a tuple of ints. *)
 
+(** Represents possible access points for a pixel neighbor *)
+module Direction : sig
+  (** Represents possible access points for a pixel neighbor, in a 3x3 grid format with the og pixel considered as "Neutral" *)
+  type t =
+    | Neutral
+    | North
+    | South
+    | East
+    | West
+    | NorthWest
+    | NorthEast
+    | SouthWest
+    | SouthEast
+
+  (** [direction_to_offset direction] maps a direction to its row and column offsets to be used in accessing array element.
+
+      - Returns a pair [(dx, dy)] where:
+        - [dx] is the row offset.
+        - [dy] is the column offset.
+   *)
+  val direction_to_offset : t -> int * int
+
+  (** [horizontal_offset direction] extracts the horizontal movement for a given direction.
+
+      - Returns [-1], [0], or [1] for left, no movement, or right.
+   *)
+  val horizontal_offset : t -> int
+
+  (** [next_col ~col ~direction] calculates the next column index based on the direction.
+
+      - [col]: The current column index.
+      - [direction]: The movement direction.
+
+      - Returns the updated column index. Calls horizontal_offset within
+   *)
+  val next_col : col:int -> direction:t -> int
+end
+type direction = Direction.t
+
+(** A pixel with RGB values. *)
+type pixel = { r : int; g : int; b : int }
+
+(** Module to handle energy values. Used within Energy map
+Overall: Image -> Energy Map -> Minimal Energy Map *)
+module Energy : sig
+  (** The type representing a single energy value. *)
+  type t = float
+
+  (** [calculate_pixel_energy ~neighbors] calculates the energy for a pixel based on its neighbors. *)
+  val calculate_pixel_energy : neighbors:(direction * pixel) list -> t
+end
+
+
+module Pair : sig
+  (** The type representing a pair of energy and direction. *)
+  type t =
+      { energy : float
+      ; direction   : direction} [@@deriving compare]
+
+  (** [create ~in_energy ~in_direction] creates a pair with energy and direction. *)
+  val create : in_energy:float -> in_direction:direction -> t
+
+  (** [get_energy pair] retrieves the energy value from the pair. *)
+  val get_energy : t -> float
+
+  (** [get_direction pair] retrieves the direction from the pair. *)
+  val get_direction : t -> direction
+
+  (** [update_energy pair energy] updates the energy of a pair. *)
+  val update_energy : t -> float -> t
+end
+
+module Array_2d : sig
+  (** The type representing a 2D generalized array. *)
+  type 'a t = 'a array array
+
+  (** [init ~rows ~cols f] initializes a 2D array using function [f]. *)
+  val init : rows:int -> cols:int -> (int -> int -> 'a) -> 'a t
+
+  (** [get ~arr ~row ~col] retrieves the value at [(row, col)] safely. *)
+  val get : arr:'a t -> row:int -> col:int -> 'a option
+
+  (** [get_row arr row] retrieves a row from the 2D array safely. *)
+  val get_row : 'a t -> int -> 'a array option
+
+  (** [dimensions arr] returns the dimensions of the 2D array. *)
+  val dimensions : 'a t -> int * int
+
+  (** [set ~arr ~row ~col value] sets the value at [(row, col)] in the array. Note: Mutation *)
+  val set : arr:'a t -> row:int -> col:int -> 'a -> unit
+
+  (** [map f arr] maps a function [f] over the array. *)
+  val map : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
+
+  (** [mapi f arr] maps a function [f] with indices over the array. *)
+  val mapi : (int -> int -> 'a -> 'b) -> 'a t -> 'b t
+
+  (** [copy arr] creates a deep copy of the array. *)
+  val copy : 'a t -> 'a t
+
+  (** [neighbors ~arr ~row ~col ~directions] retrieves neighbors of a cell in specified directions which is in a provided list. *)
+  val neighbors : arr:'a t -> row:int -> col:int -> directions:direction list -> (direction * 'a) list
+
+  (** [bottom_neighbors ~arr ~row ~col] retrieves the bottom neighbors of a cell. *)
+  val bottom_neighbors : arr:'a t -> row:int -> col:int -> (direction * 'a) list
+
+  (** [adjacents ~arr ~row ~col] retrieves the four adjacent neighbors of a cell. *)
+  val adjacents : arr:'a t -> row:int -> col:int -> (direction * 'a) list
+
+  (** [transpose arr] transposes the 2D array [arr], swapping rows and columns. *)
+  val transpose : 'a t -> 'a t
+end
+
+(** An image represented as a 2D array of pixels. *)
 type image = pixel Array_2d.t
-(** Type alias for an image representation as a 2D array of pixels (tuples). *)
 
-type energy_map = float Array_2d.t
-(** Type alias for an energy map representation as a 2D array of floats. *)
+(** An energy map represented as a 2D array of energy values. *)
+type energy_map = Energy.t Array_2d.t
 
-module Minimal_energy_map :
-sig
-    type t = Pair.t Array_2d.t
-    (** A minimal energy map type, represented as a 2D array of [Pair] cells. *)
 
-    val from_energy_map : energy_map -> t
-    (** [from_energy_map energy_map] converts a standard energy map (float Array_2d) to a minimal energy map (Pair Array_2d). *)
+module Minimal_energy_map : sig
+  (** The type representing a minimal energy map as a 2D array of Pairs. *)
+  type t = Pair.t Array_2d.t
 
-    val get_minimal_energy : t -> int -> int
-    (** [get_minimal_energy map row] retrieves the column index of the minimum energy in the given row.
-        - [map]: The minimal energy map.
-        - [row]: The row to search in.
-        - Returns: The column index with the minimum energy. *)
+  (** [from_energy_map energy_map] converts an energy map into a minimal energy map. *)
+  val from_energy_map : energy_map -> t
 
-    val update_direction : t -> int -> int -> int -> unit
-    (** [update_direction map row col direction] updates the direction value in a specified cell of the minimal energy map.
-        - [map]: The minimal energy map.
-        - [row], [col]: The row and column of the cell to update.
-        - [direction]: The new direction value. *)
+  (** [get_minimal_energy map row] finds the column index with minimal energy in the given row. *)
+  val get_minimal_energy : t -> int -> int
 
-    val to_energy_map : t -> energy_map
-    (** [to_energy_map map] converts a minimal energy map back to a standard energy map (float Array_2d). *)
+  (** [update_direction map row col direction] updates the direction of a cell. *)
+  val update_direction : t -> int -> int -> direction -> unit
 
-    val iteri_bottom_to_top : t -> f:(int -> int -> Pair.t -> Pair.t) -> t
-    (** [iteri_bottom_to_top map ~f] iterates over the minimal energy map starting from the bottom row up to the top row,
-        and from left to right within each row. For each element, it calls [f ~row ~col pair].
-        - [map]: The minimal energy map.
-        - [f]: A function receiving ~row, ~col, and the [Pair.t] at that position. *)
+  (** [to_energy_map map] converts a minimal energy map back to an energy map. *)
+  val to_energy_map : t -> energy_map
+
+  (** [map_bottom_to_top arr ~f] maps over the array from bottom to top, applying function [f]. *)
+  val map_bottom_to_top : t -> f:(int -> int -> Pair.t -> Pair.t) -> t
 end
