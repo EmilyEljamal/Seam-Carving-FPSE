@@ -111,7 +111,7 @@ module ImageProcess = struct
           let seam = Seam_identification.find_vertical_seam minimal_energy in
           let img_with_seam = draw_seam img seam in
           let img_without_seam = Seam_identification.remove_vertical_seam img seam in
-          let padded_img = pad_image_with_black img_without_seam original_rows original_cols in
+          let padded_img = pad_image_with_black img_without_seam ~target_rows:original_rows ~target_cols:original_cols in
           
           let updated_mask =
             List.filter (fun (row, col) -> col <> seam.(row)) mask

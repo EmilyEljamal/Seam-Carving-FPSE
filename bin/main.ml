@@ -1,7 +1,6 @@
 [@@@ocaml.warning "-26"]
 [@@@ocaml.warning "-27"]
 open Core
-open Types
 
 
 let () = 
@@ -45,7 +44,7 @@ let () =
 
 
 (* OBJECT REMOVAL MAIN ---  *)
-(* 
+(*
 let () = 
   match Sys.get_argv () |> Array.to_list with
   | _ :: input_path :: num_seams_str :: output_path :: [] -> 
@@ -70,7 +69,7 @@ let () =
     Gif.Gif.make_gif all_images output_path
 
   | _ ->
-      Printf.printf "Usage: <input_path> <num_seams> <output_path>\n"
+      Printf.printf "Usage: <input_path> <num_seams> <output_path>\n" *)
 
 
 
