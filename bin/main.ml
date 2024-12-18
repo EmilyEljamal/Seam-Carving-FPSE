@@ -10,23 +10,32 @@ let seam_removal input_path output_path =
     let original_image = load_image_or_exit input_path in
     let image_rows, image_cols = Array_2d.dimensions original_image in
 
-    Printf.printf "Enter the amount of seams you'd like to remove <int>:\n";
-    let num_seams_str = Stdlib.read_line () in
-    let num_seams =
-      try int_of_string num_seams_str with
-      | _ -> failwith "Error: num_seams must be an integer."
+    Printf.printf "Your image size is (%d, %d). Enter the desired size <height> <width>:\n" image_rows image_cols;
+    let size_str = Stdlib.read_line () in
+    let desired_height, desired_width =
+      try
+        match String.split ~on:' ' size_str with
+        | [height_str; width_str] ->
+          (int_of_string height_str, int_of_string width_str)
+        | _ -> failwith "Error: Please provide exactly two integers separated by a space."
+      with
+      | Failure msg -> failwith ("Error parsing input: " ^ msg)
     in
 
-    if num_seams < 0 || num_seams > image_rows || num_seams > image_cols then
-      failwith (Printf.sprintf "Error: num_seams (%d) is negative or exceeds image dimensions (rows: %d, cols: %d)." num_seams image_rows image_cols);
+    if desired_height <= 0 || desired_width <= 0 then
+      failwith "Error: Inputted dimensions must be positive integers.";
+    if desired_height > image_rows || desired_width > image_cols then
+      failwith (Printf.sprintf
+        "Error: Inputted dimensions (%d, %d) cannot exceed original dimensions (%d, %d)."
+        desired_height desired_width image_rows image_cols);
 
     let vertical_images =
-      Image_process.ImageProcess.remove_seams original_image num_seams Orientation.Vertical
+      Image_process.ImageProcess.remove_seams original_image (image_rows - desired_height) Orientation.Vertical
     in
     let last_vertical_image = List.last vertical_images |> Option.value_exn ~message:"Error: No images generated during seam removal." in
 
     let horizontal_images =
-      Image_process.ImageProcess.remove_seams last_vertical_image num_seams Orientation.Horizontal
+      Image_process.ImageProcess.remove_seams last_vertical_image (image_cols - desired_width) Orientation.Horizontal
     in
 
     let all_images = vertical_images @ horizontal_images in
@@ -70,12 +79,13 @@ let parse_mask mask_str =
 
 let object_removal input_path output_path =
   try
-    Printf.printf "Enter mask range as <row_start>-<row_end>;<col_start>-<col_end>:\n";
-    let mask_str = Stdlib.read_line () in
-    let mask = parse_mask mask_str in
     let original_image = load_image_or_exit input_path in
     let image_rows, image_cols = Array_2d.dimensions original_image in
 
+    Printf.printf "Your image size is (%d, %d) Enter mask range as <row_start>-<row_end>;<col_start>-<col_end>:\n" image_rows image_cols;
+    let mask_str = Stdlib.read_line () in
+    let mask = parse_mask mask_str in
+    
     if List.is_empty mask then failwith "Error: The mask is empty. Please specify a valid mask range.";
 
     let valid_mask = validate_mask mask image_rows image_cols in
