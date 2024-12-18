@@ -137,8 +137,6 @@ module Array_2d = struct
   let bottom_neighbors ~arr ~row ~col : (direction * 'a) list =
     neighbors ~arr ~row ~col ~directions:[SouthWest; South; SouthEast]
 
-  let adjacents ~arr ~row ~col : (direction * 'a) list =
-    neighbors ~arr ~row ~col ~directions:[North; South; East; West]
 
   let transpose (arr : 'a t) : 'a t =
     let rows = Array.length arr in
