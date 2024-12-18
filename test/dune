@@ -1,6 +1,6 @@
 (test
   (name all_tests)
-  (modules all_tests test_types test_seam_carving)
+  (modules all_tests test_types test_seam_carving test_image_process)
   (libraries
     core
     ounit2
@@ -8,3 +8,4 @@
     image_process
     seam_identification)
   (preprocess (pps ppx_jane)))
+
