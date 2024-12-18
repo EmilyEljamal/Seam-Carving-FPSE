@@ -1,6 +1,14 @@
+(** Module representing orientations for seam removal *)
+module Orientation : sig
+  type orientation =
+    | Vertical
+    | Horizontal
+end
+
+
 (** Represents possible access points for a pixel neighbor *)
 module Direction : sig
-  (** Represents possible movement directions. *)
+  (** Represents possible access points for a pixel neighbor, in a 3x3 grid format with the og pixel considered as "Neutral" *)
   type t =
     | Neutral
     | North
@@ -12,7 +20,7 @@ module Direction : sig
     | SouthWest
     | SouthEast
 
-  (** [direction_to_offset direction] maps a direction to its row and column offsets.
+  (** [direction_to_offset direction] maps a direction to its row and column offsets to be used in accessing array element.
 
       - Returns a pair [(dx, dy)] where:
         - [dx] is the row offset.
@@ -31,7 +39,7 @@ module Direction : sig
       - [col]: The current column index.
       - [direction]: The movement direction.
 
-      - Returns the updated column index.
+      - Returns the updated column index. Calls horizontal_offset within
    *)
   val next_col : col:int -> direction:t -> int
 end
@@ -40,22 +48,17 @@ type direction = Direction.t
 (** A pixel with RGB values. *)
 type pixel = { r : int; g : int; b : int }
 
-(** Module to handle energy values. *)
+(** Module to handle energy values. Used within Energy map
+Overall: Image -> Energy Map -> Minimal Energy Map *)
 module Energy : sig
   (** The type representing a single energy value. *)
   type t = float
-
-  (** [create value] creates an energy value from a float. *)
-  val create : float -> t
-
-  (** [value energy] extracts the float value from an energy type. *)
-  val value : t -> float
 
   (** [calculate_pixel_energy ~neighbors] calculates the energy for a pixel based on its neighbors. *)
   val calculate_pixel_energy : neighbors:(direction * pixel) list -> t
 end
 
-(** Module to handle Pair values with energy and direction. *)
+
 module Pair : sig
   (** The type representing a pair of energy and direction. *)
   type t =
@@ -74,8 +77,9 @@ module Pair : sig
   (** [update_energy pair energy] updates the energy of a pair. *)
   val update_energy : t -> float -> t
 end
+
 module Array_2d : sig
-  (** The type representing a 2D array. *)
+  (** The type representing a 2D generalized array. *)
   type 'a t = 'a array array
 
   (** [init ~rows ~cols f] initializes a 2D array using function [f]. *)
@@ -90,7 +94,7 @@ module Array_2d : sig
   (** [dimensions arr] returns the dimensions of the 2D array. *)
   val dimensions : 'a t -> int * int
 
-  (** [set ~arr ~row ~col value] sets the value at [(row, col)] in the array. *)
+  (** [set ~arr ~row ~col value] sets the value at [(row, col)] in the array. Note: Mutation *)
   val set : arr:'a t -> row:int -> col:int -> 'a -> unit
 
   (** [map f arr] maps a function [f] over the array. *)
@@ -102,7 +106,7 @@ module Array_2d : sig
   (** [copy arr] creates a deep copy of the array. *)
   val copy : 'a t -> 'a t
 
-  (** [neighbors ~arr ~row ~col ~directions] retrieves neighbors of a cell in specified directions. *)
+  (** [neighbors ~arr ~row ~col ~directions] retrieves neighbors of a cell in specified directions which is in a provided list. *)
   val neighbors : arr:'a t -> row:int -> col:int -> directions:direction list -> (direction * 'a) list
 
   (** [bottom_neighbors ~arr ~row ~col] retrieves the bottom neighbors of a cell. *)
@@ -110,6 +114,9 @@ module Array_2d : sig
 
   (** [adjacents ~arr ~row ~col] retrieves the four adjacent neighbors of a cell. *)
   val adjacents : arr:'a t -> row:int -> col:int -> (direction * 'a) list
+
+  (** [transpose arr] transposes the 2D array [arr], swapping rows and columns. *)
+  val transpose : 'a t -> 'a t
 end
 
 (** An image represented as a 2D array of pixels. *)
@@ -117,7 +124,8 @@ type image = pixel Array_2d.t
 
 (** An energy map represented as a 2D array of energy values. *)
 type energy_map = Energy.t Array_2d.t
-(** Module for minimal energy maps. *)
+
+
 module Minimal_energy_map : sig
   (** The type representing a minimal energy map as a 2D array of Pairs. *)
   type t = Pair.t Array_2d.t
@@ -134,6 +142,6 @@ module Minimal_energy_map : sig
   (** [to_energy_map map] converts a minimal energy map back to an energy map. *)
   val to_energy_map : t -> energy_map
 
-  (** [iteri_bottom_to_top arr ~f] iterates over the array from bottom to top, applying function [f]. *)
-  val iteri_bottom_to_top : t -> f:(int -> int -> Pair.t -> Pair.t) -> t
+  (** [map_bottom_to_top arr ~f] maps over the array from bottom to top, applying function [f]. *)
+  val map_bottom_to_top : t -> f:(int -> int -> Pair.t -> Pair.t) -> t
 end

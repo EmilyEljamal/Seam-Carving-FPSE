@@ -4,11 +4,10 @@ open Core
 let calc_minimal_energy_to_bottom (energy_map: energy_map) : Minimal_energy_map.t =
   let initial_map = Minimal_energy_map.from_energy_map energy_map in
   let rows, _ = Array_2d.dimensions initial_map in
-  (* A function to update a pair *)
   let update_pair row col pair =
     let current_energy = Pair.get_energy pair in
     if row = rows - 1 then
-      pair  (* Last row: no neighbors below, energy remains the same *)
+      pair
     else
       let neighbors = Array_2d.bottom_neighbors ~arr:initial_map ~row ~col in
       let min_neighbor_energy, min_dir =
@@ -22,7 +21,7 @@ let calc_minimal_energy_to_bottom (energy_map: energy_map) : Minimal_energy_map.
       in
       Pair.create ~in_energy:(current_energy +. min_neighbor_energy) ~in_direction:min_dir
   in
-  Minimal_energy_map.iteri_bottom_to_top initial_map ~f:(fun row col pair -> 
+  Minimal_energy_map.map_bottom_to_top initial_map ~f:(fun row col pair -> 
     let updated_pair = update_pair row col pair in 
     Array_2d.set ~arr:initial_map ~row ~col updated_pair;
     updated_pair
@@ -46,14 +45,14 @@ let calc_minimal_energy_to_bottom (energy_map: energy_map) : Minimal_energy_map.
     Array.of_list (trace_seam (rows - 1) start_col [])
   
 
-  let remove_vertical_seam (img: image) (seam: int array) : image =
-    let height, width = Array_2d.dimensions img in
+  let remove_vertical_seam (_image: image) (_seam: int array) : image =
+    let height, width = Array_2d.dimensions _image in
     let new_width = width - 1 in
     Array_2d.init ~rows:height ~cols:new_width (fun y x ->
-      if x < seam.(y) then
-        img.(y).(x)
+      if x < _seam.(y) then
+        _image.(y).(x)
       else
-        img.(y).(x + 1)
+        _image.(y).(x + 1)
     )
 
  (* IN PROGRESS - FIXING*)
@@ -79,7 +78,7 @@ let calc_minimal_energy_to_bottom (energy_map: energy_map) : Minimal_energy_map.
       in
       Pair.create ~in_energy:(current_energy +. min_neighbor_energy) ~in_direction:min_dir
     in
-    Minimal_energy_map.iteri_bottom_to_top initial_map ~f:(fun row col pair -> 
+    Minimal_energy_map.map_bottom_to_top initial_map ~f:(fun row col pair -> 
       let updated_pair = update_pair row col pair in 
       Array_2d.set ~arr:initial_map ~row ~col updated_pair;
       updated_pair )

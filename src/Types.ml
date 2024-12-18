@@ -1,9 +1,14 @@
 [@@@ocaml.warning "-27"]
 open Core
 
-(** Module for movement directions and related utilities *)
+
+module Orientation = struct
+  (** Represents the orientation for seam removal. *)
+  type orientation =
+    | Vertical
+    | Horizontal
+end
 module Direction = struct
-  (** Represents possible movement directions. *)
   type t =
     | Neutral
     | North
@@ -15,7 +20,6 @@ module Direction = struct
     | SouthWest
     | SouthEast
 
-  (** [direction_to_offset direction] maps a direction to its row and column offsets. *)
   let direction_to_offset = function
     | Neutral    -> (0, 0)
     | North      -> (-1, 0)
@@ -27,12 +31,10 @@ module Direction = struct
     | SouthWest  -> (1, -1)
     | SouthEast  -> (1, 1)
 
-  (** [horizontal_offset direction] extracts the horizontal movement (-1, 0, 1) for a direction. *)
   let horizontal_offset direction =
     let _, dy = direction_to_offset direction in
     dy
 
-  (** [next_col ~col ~direction] calculates the next column index based on the direction. *)
   let next_col ~col ~direction =
     col + horizontal_offset direction
 
@@ -47,18 +49,9 @@ type pixel = {
 
 
   module Energy = struct
-    (** The type representing a single energy value. *)
     include Direction
     type t = float
-    
   
-    (** [create value] creates an energy value. *)
-    let create value : t = value
-  
-    (** [value energy] extracts the float value of energy. *)
-    let value (energy : t) : float = energy
-  
-    (** [calculate_pixel_energy ~neighbors] computes the energy from pixel neighbors. *)
     let calculate_pixel_energy ~neighbors : t =
       let get_rgb_diff n1 n2 =
         let dx_r = n2.r - n1.r in
@@ -82,12 +75,10 @@ type pixel = {
       Float.of_int (dx2 + dy2)
   end
 
-  
-
   module Pair = struct
     type t = {
       energy : float;
-      direction : Direction.t; 
+      direction : direction; 
     } [@@deriving compare]
   
     let create ~in_energy ~in_direction : t =
@@ -96,15 +87,13 @@ type pixel = {
     let get_energy (_pair : t) : float =
       _pair.energy
   
-    let get_direction (_pair : t) : Direction.t =
+    let get_direction (_pair : t) : direction =
       _pair.direction
   
     let update_energy (_pair : t) (_energy : float) : t =
       { energy = _energy; direction = _pair.direction }
   end
   
-
-
 module Array_2d = struct
   type 'a t = 'a array array
 
@@ -150,14 +139,19 @@ module Array_2d = struct
 
   let adjacents ~arr ~row ~col : (direction * 'a) list =
     neighbors ~arr ~row ~col ~directions:[North; South; East; West]
+
+  let transpose (arr : 'a t) : 'a t =
+    let rows = Array.length arr in
+    let cols = if rows = 0 then 0 else Array.length arr.(0) in
+    Array.init cols ~f:(fun j ->
+      Array.init rows ~f:(fun i -> arr.(i).(j))
+    )
+    
 end
 
 type image = pixel Array_2d.t
 
-
-
 type energy_map = Energy.t Array_2d.t
-
 
 module Minimal_energy_map = struct
   type t = Pair.t Array_2d.t
@@ -185,7 +179,7 @@ module Minimal_energy_map = struct
   let to_energy_map (map : t) : energy_map =
     Array_2d.map (fun row col pair -> Pair.get_energy pair) map
     
-  let iteri_bottom_to_top (arr : t) ~(f : int -> int -> Pair.t -> Pair.t) : t =
+  let map_bottom_to_top (arr : t) ~(f : int -> int -> Pair.t -> Pair.t) : t =
     let rows = Array.length arr in
     let cols = if rows > 0 then Array.length arr.(0) else 0 in
     Array.init rows ~f:(fun row ->

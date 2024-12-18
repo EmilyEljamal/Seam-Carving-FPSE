@@ -1,6 +1,9 @@
 open Core
 open Types
 
+open Core
+open Types
+
 module Gif = struct
 
   let save_gif (frame: image) (_filename : string) : unit =

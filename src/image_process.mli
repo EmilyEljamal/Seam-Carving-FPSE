@@ -1,4 +1,5 @@
 open Types
+open Orientation
 
 (** The [ImageProcess] module provides functionality for image manipulation, 
     including loading images, converting them to RGB pixel data, and processing energy maps. *)
@@ -18,26 +19,39 @@ module ImageProcess : sig
 
   (** [calculate_energy_map mask img] calculates the energy map of an image using gradient magnitude. *)
   val calculate_energy_map : object_removal:bool -> (int * int) list option -> image -> energy_map
+  (** [calculate_energy_map mask img] calculates the energy map of an image using gradient magnitude. *)
+  val calculate_energy_map : object_removal:bool -> (int * int) list option -> image -> energy_map
 
   (** [draw_seam img seam] highlights a seam in the image by drawing it in a specified color. *)
   val draw_seam : image -> int array -> image
 
-  (** [remove_seam img seam width] removes a seam from the image, reducing its width by 1. *)
-  val remove_seams : image -> int -> image list
+  (** [pad_image_with_black img ~target_rows ~target_cols] pads the given image 
+      to the specified target rows and columns, filling extra space with black pixels. 
+  *)
+  val pad_image_with_black : image -> target_rows:int -> target_cols:int -> image
 
-  val remove_object : image -> (int * int) list -> int array list -> int array list * image list
-  (* val add_seam : image -> int array -> image 
-  val add_seams : image -> int -> int -> int array option -> image list  *)
+  (** [perform_seam_removal image remaining_seams target_rows target_cols] performs seam removal 
+      recursively on the given image while padding it back to the original dimensions.
+  *)
+  val perform_seam_removal : image -> int -> int -> int -> image list
+
+  (** [remove_seams image num_seams orientation] removes the specified number of seams 
+      from the given image based on the orientation (Vertical or Horizontal). 
+  *)
+  val remove_seams : image -> int -> orientation -> image list
+
+
+
 
     (* * [save_pixels_as_image ~pixels ~width ~height ~output_filename] saves a pixel array as an image file.
     val save_pixels_as_image : 
     pixels:image -> width:int -> height:int -> output_filename:string -> unit *)
 
-  (* 
+  (* val add_seam : image -> int array -> image 
 
-  
+  val remove_object : image -> (int * int) list -> int array list -> int array list * image list
 
   val add_stored_seams : image -> int array list -> image list
 
-   *)
+  val add_seams : image -> int -> int -> image list  *)
 end
