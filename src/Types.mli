@@ -21,24 +21,16 @@ module Direction : sig
     | SouthEast
 
   (** [direction_to_offset direction] maps a direction to its row and column offsets to be used in accessing array element.
-
-      - Returns a pair [(dx, dy)] where:
-        - [dx] is the row offset.
-        - [dy] is the column offset.
+      - Returns a pair [(dx, dy)]
    *)
   val direction_to_offset : t -> int * int
 
   (** [horizontal_offset direction] extracts the horizontal movement for a given direction.
-
       - Returns [-1], [0], or [1] for left, no movement, or right.
    *)
   val horizontal_offset : t -> int
 
   (** [next_col ~col ~direction] calculates the next column index based on the direction.
-
-      - [col]: The current column index.
-      - [direction]: The movement direction.
-
       - Returns the updated column index. Calls horizontal_offset within
    *)
   val next_col : col:int -> direction:t -> int

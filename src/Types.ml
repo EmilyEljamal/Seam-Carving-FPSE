@@ -3,7 +3,6 @@ open Core
 
 
 module Orientation = struct
-  (** Represents the orientation for seam removal. *)
   type orientation =
     | Vertical
     | Horizontal

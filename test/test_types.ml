@@ -6,22 +6,22 @@ open Direction
 
   let test_direction_module _ =
   (* Test offsets *)
-  assert_equal (direction_to_offset NorthWest) (-1, -1) ~msg:"NorthWest offset failed";
-  assert_equal (direction_to_offset NorthEast) (-1, 1) ~msg:"NorthEast offset failed";
-  assert_equal (direction_to_offset SouthWest) (1, -1) ~msg:"SouthWest offset failed";
-  assert_equal (direction_to_offset SouthEast) (1, 1) ~msg:"SouthEast offset failed";
+  assert_equal (direction_to_offset NorthWest) (-1, -1);
+  assert_equal (direction_to_offset NorthEast) (-1, 1);
+  assert_equal (direction_to_offset SouthWest) (1, -1);
+  assert_equal (direction_to_offset SouthEast) (1, 1);
 
   (* Test horizontal offsets *)
-  assert_equal (horizontal_offset NorthWest) (-1) ~msg:"NorthWest horizontal offset failed";
-  assert_equal (horizontal_offset NorthEast) 1 ~msg:"NorthEast horizontal offset failed";
-  assert_equal (horizontal_offset SouthWest) (-1) ~msg:"SouthWest horizontal offset failed";
-  assert_equal (horizontal_offset SouthEast) 1 ~msg:"SouthEast horizontal offset failed";
+  assert_equal (horizontal_offset NorthWest) (-1);
+  assert_equal (horizontal_offset NorthEast) 1;
+  assert_equal (horizontal_offset SouthWest) (-1);
+  assert_equal (horizontal_offset SouthEast) 1;
 
   (* Test next column calculations *)
-  assert_equal (next_col ~col:5 ~direction:NorthWest) 4 ~msg:"Next column for NorthWest failed";
-  assert_equal (next_col ~col:5 ~direction:NorthEast) 6 ~msg:"Next column for NorthEast failed";
-  assert_equal (next_col ~col:5 ~direction:SouthWest) 4 ~msg:"Next column for SouthWest failed";
-  assert_equal (next_col ~col:5 ~direction:SouthEast) 6 ~msg:"Next column for SouthEast failed"
+  assert_equal (next_col ~col:5 ~direction:NorthWest) 4;
+  assert_equal (next_col ~col:5 ~direction:NorthEast) 6;
+  assert_equal (next_col ~col:5 ~direction:SouthWest) 4;
+  assert_equal (next_col ~col:5 ~direction:SouthEast) 6
 
   let test_energy_module _ =
   let neighbors = [
@@ -35,23 +35,23 @@ open Direction
 
   let test_pair_module _ =
   let pair = Pair.create ~in_energy:10.5 ~in_direction:South in
-  assert_equal (Pair.get_energy pair) 10.5 ~msg:"Energy retrieval failed";
-  assert_equal (Pair.get_direction pair) South ~msg:"Direction retrieval failed";
+  assert_equal (Pair.get_energy pair) 10.5;
+  assert_equal (Pair.get_direction pair) South;
   let updated_pair = Pair.update_energy pair 15.0 in
-  assert_equal (Pair.get_energy updated_pair) 15.0 ~msg:"Energy update failed";
-  assert_equal (Pair.get_direction updated_pair) South ~msg:"Direction should remain the same"
+  assert_equal (Pair.get_energy updated_pair) 15.0; 
+  assert_equal (Pair.get_direction updated_pair) South 
 
   let test_array_2d_init _ =
     let arr = Array_2d.init ~rows:3 ~cols:3 (fun row col -> row + col) in
-    assert_equal (Array_2d.get ~arr ~row:0 ~col:0) (Some 0) ~msg:"Initialization failed at (0, 0)";
-    assert_equal (Array_2d.get ~arr ~row:1 ~col:2) (Some 3) ~msg:"Initialization failed at (1, 2)";
-    assert_equal (Array_2d.dimensions arr) (3, 3) ~msg:"Dimensions check failed";
+    assert_equal (Array_2d.get ~arr ~row:0 ~col:0) (Some 0) ~msg:"initialization for a 2D array failed at (0, 0)";
+    assert_equal (Array_2d.get ~arr ~row:1 ~col:2) (Some 3) ~msg:"initialization for a 2D array failed at (1, 2)";
+    assert_equal (Array_2d.dimensions arr) (3, 3) ~msg:"dimensions check for a 2D array failed";
     assert_equal (Array_2d.get ~arr ~row:5 ~col:5) None ~msg:"Out-of-bounds check failed"
 
   let test_array_2d_get_row _ =
     let arr = Array_2d.init ~rows:3 ~cols:3 (fun row col -> row * 3 + col) in
-    assert_equal (Array_2d.get_row arr 1) (Some [|3; 4; 5|]) ~msg:"Row retrieval failed for row 1";
-    assert_equal (Array_2d.get_row arr 5) None ~msg:"Out-of-bounds row retrieval failed"
+    assert_equal (Array_2d.get_row arr 1) (Some [|3; 4; 5|]) ~msg:"trying to access row failed for row 1";
+    assert_equal (Array_2d.get_row arr 5) None ~msg:"Out-of-bounds for accessing row failed"
 
   let test_array_2d_set _ =
     let arr = Array_2d.init ~rows:3 ~cols:3 (fun row col -> row + col) in
@@ -61,8 +61,8 @@ open Direction
   let test_array_2d_map _ =
     let arr = Array_2d.init ~rows:3 ~cols:3 (fun row col -> row + col) in
     let mapped_arr = Array_2d.map (fun _ _ value -> value * 2) arr in
-    assert_equal (Array_2d.get ~arr:mapped_arr ~row:1 ~col:1) (Some 4) ~msg:"Mapping failed at (1, 1)";
-    assert_equal (Array_2d.get ~arr:mapped_arr ~row:2 ~col:2) (Some 8) ~msg:"Mapping failed at (2, 2)"
+    assert_equal (Array_2d.get ~arr:mapped_arr ~row:1 ~col:1) (Some 4) ~msg:"mapping failed at (1, 1)";
+    assert_equal (Array_2d.get ~arr:mapped_arr ~row:2 ~col:2) (Some 8) ~msg:"mapping failed at (2, 2)"
 
   let test_array_2d_copy _ =
     let arr = Array_2d.init ~rows:3 ~cols:3 (fun row col -> row + col) in
@@ -94,7 +94,7 @@ open Direction
   let test_minimal_energy_map_module _ =
     let energy_map = Array_2d.init ~rows:3 ~cols:3 (fun _ _ -> 5.0) in
     let min_energy_map = Minimal_energy_map.from_energy_map energy_map in
-    assert_equal (Minimal_energy_map.get_minimal_energy min_energy_map 0) 0 ~msg:"Minimal energy retrieval failed";
+    assert_equal (Minimal_energy_map.get_minimal_energy min_energy_map 0) 0;
     assert_raises (Failure "Invalid row index") (fun () ->
       Minimal_energy_map.get_minimal_energy min_energy_map 4
     ) ~msg:"Invalid row index failed for get minimal energy";

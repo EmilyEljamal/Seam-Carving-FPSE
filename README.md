@@ -97,6 +97,7 @@ Testing Coverage:
 bisect-ppx-report html                                                    
 open _coverage/index.html 
 ```
+
 References:
 
 https://github.com/vivianhylee/seam-carving
@@ -107,3 +108,4 @@ https://pages.cs.wisc.edu/~moayad/cs766/index.html
 At this time, we have completed types, image processing and parts of seam identification. Types contains all of the data structures that we will need for the actual completion of our algorithm such as a 2d array, pairs, pixels, images, energy maps, and minimal energy maps along with helper functions. In addition, we covered 100% of the testing for it. Image processing can successfully load an image from a path, convert it into a 2d array, change select pixels on an image to hot pink and sets up removing pixels from an image. In seam identification, we completed the main algorithm of calculating the minimal energy grid which forms a critical part of seam carving. Some of our code needs to be refactored and made simpler, however, it is all working as planned.
 
 In the next 2 weeks before the project is due, we plan to continue to work on our command line in main (which has been started), finish calculate vertical seam and remove seam, and finally finish the gif module. When all of that is completed, we will most likely create a front end where users are able to input the command line options, paths and resizing parameters, and see the gif and output image on screen. If time allows, we may incorporate object removal functionality.
+After attempting to run landmarks on our program, we were unable to due to the fact that we both have M1 Macs.
