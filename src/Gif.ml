@@ -24,11 +24,13 @@ module Gif = struct
     let filename = Printf.sprintf "frames/frame_%03d.ppm" index in
     save_gif _frame filename
 
-  let make_gif (_frames : image list) (_filename : string) : unit =
+  let make_gif (_frames : image list) (_filename : string) (final_image: image) : unit =
     ignore (Sys_unix.command "mkdir -p frames");
     List.iteri _frames ~f:(fun ind frame ->
       add_frame frame ind
     );
+    let filename_img = _filename ^ ".png" in
+    save_gif final_image filename_img;
     let command = Printf.sprintf "magick convert -delay 10 -loop 0 frames/frame_*.ppm %s.gif" _filename in
     ignore (Sys_unix.command command);
     ignore (Sys_unix.command "rm -r frames") 

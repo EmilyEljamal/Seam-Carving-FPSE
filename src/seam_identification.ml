@@ -46,14 +46,14 @@ let calc_minimal_energy_to_bottom (energy_map: energy_map) : Minimal_energy_map.
     Array.of_list (trace_seam (rows - 1) start_col [])
   
 
-  let remove_vertical_seam (_image: image) (_seam: int array) : image =
-    let height, width = Array_2d.dimensions _image in
+  let remove_vertical_seam (img: image) (seam: int array) : image =
+    let height, width = Array_2d.dimensions img in
     let new_width = width - 1 in
     Array_2d.init ~rows:height ~cols:new_width (fun y x ->
-      if x < _seam.(y) then
-        _image.(y).(x)
+      if x < seam.(y) then
+        img.(y).(x)
       else
-        _image.(y).(x + 1)
+        img.(y).(x + 1)
     )
 
  (* IN PROGRESS - FIXING*)

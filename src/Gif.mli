@@ -10,7 +10,7 @@ module Gif : sig
     (** [add_frame frame] adds a single frame to the GIF sequence.
         - [frame]: The frame to add to the sequence. *)
 
-    val make_gif : image list -> string -> unit
+    val make_gif : image list -> string -> image -> unit
     (** [make_gif frames filename] creates a GIF file from a list of frames.
         - [frames]: A list of frames to include in the GIF.
         - [filename]: The name of the output GIF file. *)

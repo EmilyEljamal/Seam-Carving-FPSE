@@ -194,7 +194,4 @@ module Minimal_energy_map = struct
         f original_row col arr.(original_row).(col)
       )
     )
-    
-    
-  
 end

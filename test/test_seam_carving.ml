@@ -1,8 +1,8 @@
-(* open OUnit2
-open Core
+open OUnit2
+(* open Core *)
 open Types
 
-
+(*
 let test_pair _ =
   let pair = Pair.create ~in_energy:10.5 ~in_direction:1 in
   assert_equal (Pair.get_energy pair) 10.5 ~msg:"Energy retrieval failed";
@@ -174,18 +174,35 @@ let image_edge = Array_2d.init ~rows:1 ~cols:1 (fun _ _ -> { r = 5; g = 5; b = 5
     assert_equal (Pair.get_energy (get_pair minimal_energy_map 0 2)) 46.0 ~msg:"Row 0, Col 2";
   
     (* Debugging complete map to ensure all values match *)
-    Printf.printf "Debugging completed, assertions passed.\n"
+    Printf.printf "Debugging completed, assertions passed.\n" *)
+
+    let test_find_vertical_seam _ =
+      let create_pair energy direction =
+        Pair.create ~in_energy:energy ~in_direction:direction
+      in
+      let minimal_energy_map = [|
+        [| create_pair 1.0 South;    create_pair 2.0 Neutral;   create_pair 3.0 East  |];
+        [| create_pair 6.0 South;    create_pair 16.0 East;    create_pair 26.0 Neutral |];
+        [| create_pair 16.0 East; create_pair 26.0 Neutral; create_pair 46.0 Neutral |];
+      |] in
+      let seam = Seam_identification.find_vertical_seam minimal_energy_map in
+      Printf.printf "Seam: [";
+      for i = 0 to Array.length seam - 1 do
+        Printf.printf "%d%s" seam.(i) (if i < Array.length seam - 1 then "; " else "")
+      done;
+      Printf.printf "]\n";
+      assert_equal seam [|0; 1; 2|] ~msg:"Seam finding failed for minimal energy map"
 
 (* Test suite *)
 let suite =
   "All Tests" >::: [
-    "Test Pair module" >:: test_pair;
+    (* "Test Pair module" >:: test_pair;
     "Test Array_2d module" >:: test_array_2d;
-    "Test Minimal_energy_map module" >:: test_minimal_energy_map;
+    "Test Minimal_energy_map module" >:: test_minimal_energy_map; *)
     "Test Vertical Seam" >:: test_find_vertical_seam;
-    "Test Remove Seam" >:: test_remove_vertical_seam;
-      "test_calc_minimal_energy_to_bottom" >:: test_calc_minimal_energy_to_bottom
+    (* "Test Remove Seam" >:: test_remove_vertical_seam;
+      "test_calc_minimal_energy_to_bottom" >:: test_calc_minimal_energy_to_bottom *)
   ]
 
 let () =
-  run_test_tt_main suite *)
+  run_test_tt_main suite 
